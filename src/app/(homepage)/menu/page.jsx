@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+
 import FilterMenu from "./components/FilterMenu";
 import { CiBowlNoodles } from "react-icons/ci";
 import { GiNoodles } from "react-icons/gi";
@@ -6,9 +7,8 @@ import { TbSoup } from "react-icons/tb";
 import Menu1 from "@/assets/bg-hero.jpg";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { MdOutlineAddShoppingCart } from "react-icons/md";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 const dataFilterMenu = [
 	{
@@ -73,63 +73,6 @@ const dataFilterMenu = [
 	},
 ];
 
-const dataMenu = [
-	{
-		id: 1,
-		namamenu: "Mie Ayam Bakso",
-		harga: 15000,
-		gambar: Menu1,
-	},
-	{
-		id: 2,
-		namamenu: "Mie Ayam Bakso",
-		harga: 15000,
-		gambar: Menu1,
-	},
-	{
-		id: 3,
-		namamenu: "Mie Ayam Bakso",
-		harga: 15000,
-		gambar: Menu1,
-	},
-	{
-		id: 4,
-		namamenu: "Mie Ayam Bakso",
-		harga: 15000,
-		gambar: Menu1,
-	},
-	{
-		id: 5,
-		namamenu: "Mie Ayam Bakso",
-		harga: 15000,
-		gambar: Menu1,
-	},
-	{
-		id: 6,
-		namamenu: "Mie Ayam Bakso",
-		harga: 15000,
-		gambar: Menu1,
-	},
-	{
-		id: 7,
-		namamenu: "Mie Ayam Bakso",
-		harga: 15000,
-		gambar: Menu1,
-	},
-	{
-		id: 8,
-		namamenu: "Mie Ayam Bakso",
-		harga: 15000,
-		gambar: Menu1,
-	},
-	{
-		id: 9,
-		namamenu: "Mie Ayam Bakso",
-		harga: 15000,
-		gambar: Menu1,
-	},
-];
-
 const formatUang = (uang) => {
 	return new Intl.NumberFormat("id-ID", {
 		style: "currency",
@@ -138,6 +81,22 @@ const formatUang = (uang) => {
 };
 
 const MenuPage = () => {
+	const [dataMenus, setDataMenus] = useState([]);
+
+	console.log("data data:", dataMenus);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const response = await fetch("http://localhost:8000/api/menu", {
+				cache: "force-cache",
+			});
+			const data = await response.json();
+			setDataMenus(data.data);
+		};
+
+		fetchData();
+	}, []);
+
 	return (
 		<div className="">
 			<div className="h-full max-w-screen-xl mx-auto">
@@ -157,24 +116,28 @@ const MenuPage = () => {
 					</div>
 					<div className="mt-10">
 						<div className="flex items-center">
-							<h1 className="font-semibold text-2xl w-[250px]">Menu Mie Ayam</h1>
+							<h1 className="font-semibold text-2xl w-[250px]">
+								Menu Mie Ayam
+							</h1>
 							<hr className="w-full" />
 						</div>
 						<div className="grid grid-cols-4 gap-6 mt-4">
-							{dataMenu.map((data) => (
+							{dataMenus?.map((data) => (
 								<Card key={data.id} className="flex-col rounded-md p-3">
 									<Link href={`menu/${data.id}`}>
-										<Image
-											src={data.gambar}
-											alt={data.namamenu}
-											className="w-full h-[200px] object-cover rounded-sm"
-										/>
-										<div className="text-start w-full my-4">
-											<p className="font-semibold">{data.namamenu}</p>
+										<div className="bg-slate-100 rounded-lg">
+											<Image
+												src={`http://localhost:8000/api/menu/view/${data.gambar}`}
+												alt={data.nama_menu}
+												width={300}
+												height={300}
+												className="w-full h-[270px] rounded-sm"
+											/>
+										</div>
+										<div className="text-center w-full my-4">
+											<p className="font-semibold">{data.nama_menu}</p>
 											<p className="text-gray-400 w-full text-sm">
-												Lorem ipsum dolor, sit amet consectetur adipisicing
-												elit. Sit, vitae?Lorem ipsum dolor, sit amet consectetur
-												adipisicing elit. Sit, vitae?
+												{data.deskripsi}
 											</p>
 										</div>
 									</Link>

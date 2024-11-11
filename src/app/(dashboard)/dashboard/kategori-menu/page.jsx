@@ -35,6 +35,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+
 import {
 	Dialog,
 	DialogContent,
@@ -47,59 +48,62 @@ import {
 import { FiTrash2 } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "sonner";
-import TambahUser from "./components/TambahUser";
-import UpdateUser from "./components/UpdateUser";
 
-const PageUser = () => {
+import UpdateKategoriMenu from "./components/UpdateKategoriMenu";
+import TambahKategoriMenu from "./components/TambahKategoriMenu";
+
+const PageMenu = () => {
+	const [data, setData] = React.useState([]);
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({});
 	const [rowSelection, setRowSelection] = React.useState({});
-	const [dataUser, setDataUser] = React.useState([]);
 	const [openHapus, setOpenHapus] = React.useState(false);
 	const [selectedId, setSelectedId] = React.useState(null);
 
-	const handleDelete = async () => {
-		const response = await axios.delete(
-			`http://localhost:8000/api/user/${selectedId}`
-		);
+	const fetchDataKategoriMenu = async () => {
+		const response = await axios.get(`http://localhost:8000/api/kategori`);
+		setData(response.data.data);
+	};
 
-		if (response.status === 200) {
-			toast.success("Data berhasil dihapus.");
-			fetchDataUser();
-		} else {
-			toast.error("Terjadi kesalahan.");
+	const handleDelete = async () => {
+		try {
+			const response = await axios.delete(
+				`http://localhost:8000/api/kategori/${selectedId}`
+			);
+			if (response.status === 200) {
+				toast.success("Kategori menu berhasil dihapus");
+				setOpenHapus(false);
+				fetchDataKategoriMenu();
+			}
+		} catch (error) {
+			console.error("Error deleting kategori menu:", error);
+			toast.error("Gagal menghapus kategori menu");
 		}
 	};
 
 	const columns = [
 		{
-			accessorKey: "nama",
-			header: "Nama",
-			cell: ({ row }) => <div>{row.getValue("nama")}</div>,
-		},
-		{
-			accessorKey: "email",
-			header: ({ column }) => {
-				return (
-					<Button
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-					>
-						Email
-						<CaretSortIcon className="ml-2 h-4 w-4" />
-					</Button>
-				);
-			},
+			accessorKey: "nama_kategori",
+			header: "Kategori Menu",
 			cell: ({ row }) => (
-				<div className="lowercase">{row.getValue("email")}</div>
+				<div className="capitalize w-[200px] overflow-x-auto">
+					{row.getValue("nama_kategori")}
+				</div>
 			),
 		},
 		{
-			accessorKey: "role",
-			header: "Role",
+			accessorKey: "createdAt",
+			header: "Tanggal",
 			cell: ({ row }) => (
-				<div className="capitalize">{row.getValue("role")}</div>
+				<div className="capitalize w-[200px] overflow-x-auto">
+					{new Date(row.getValue("createdAt")).toLocaleDateString("id-ID", {
+						weekday: "long",
+						year: "numeric",
+						month: "long",
+						day: "numeric",
+					})}
+				</div>
 			),
 		},
 		{
@@ -110,17 +114,17 @@ const PageUser = () => {
 				const rowData = row.original;
 				return (
 					<div className="flex items-center gap-2">
-						<UpdateUser
-							fetchDataUser={fetchDataUser}
-							rowData={rowData}
+						<UpdateKategoriMenu
+							fetchDataKategoriMenu={fetchDataKategoriMenu}
 							id={id}
+							rowData={rowData}
 						/>
 						<Dialog open={openHapus} onOpenChange={setOpenHapus}>
 							<DialogTrigger asChild>
 								<Button
 									variant="outline"
 									size="icon"
-									className="shadow-none"
+									className="shadow-none "
 									onClick={() => {
 										setSelectedId(id);
 									}}
@@ -130,9 +134,9 @@ const PageUser = () => {
 							</DialogTrigger>
 							<DialogContent className="sm:max-w-[425px]">
 								<DialogHeader>
-									<DialogTitle>Hapus User</DialogTitle>
+									<DialogTitle>Hapus Menu</DialogTitle>
 									<DialogDescription>
-										Apakah anda yakin ingin menghapus user ini?
+										Apakah anda yakin ingin menghapus menu ini?
 									</DialogDescription>
 								</DialogHeader>
 								<DialogFooter>
@@ -158,7 +162,7 @@ const PageUser = () => {
 	];
 
 	const table = useReactTable({
-		data: dataUser,
+		data: data,
 		columns,
 		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
@@ -176,28 +180,23 @@ const PageUser = () => {
 		},
 	});
 
-	const fetchDataUser = async () => {
-		const response = await axios.get("http://localhost:8000/api/user");
-		setDataUser(response.data.data);
-	};
-
 	React.useEffect(() => {
-		fetchDataUser();
+		fetchDataKategoriMenu();
 	}, []);
 
 	return (
 		<div className="w-full">
-			<h1 className="font-bold text-2xl">Dashboard User</h1>
+			<h1 className="font-bold text-2xl">Dashboard Kategori Menu</h1>
 			<div className="flex items-center py-4 gap-2">
 				<Input
-					placeholder="Filter emails..."
-					value={table.getColumn("email")?.getFilterValue() ?? ""}
+					placeholder="Cari menu..."
+					value={table.getColumn("nama_kategori")?.getFilterValue() ?? ""}
 					onChange={(event) =>
-						table.getColumn("email")?.setFilterValue(event.target.value)
+						table.getColumn("nama_kategori")?.setFilterValue(event.target.value)
 					}
 					className="max-w-sm"
 				/>
-				<TambahUser fetchDataUser={fetchDataUser} />
+				<TambahKategoriMenu fetchDataKategoriMenu={fetchDataKategoriMenu} />
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">
@@ -303,4 +302,4 @@ const PageUser = () => {
 	);
 };
 
-export default PageUser;
+export default PageMenu;

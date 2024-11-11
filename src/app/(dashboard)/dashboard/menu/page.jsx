@@ -36,159 +36,183 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 
-import Menu1 from "@/assets/baso1.jpg";
 import Image from "next/image";
 import TambahMenu from "./components/TambahMenu";
 
-const data = [
-	{
-		id: "1",
-		nama: "Nasi Goreng",
-		harga: 25000,
-		kategori: "Main Course",
-		deskripsi: "Fried rice with chicken, vegetables, and a fried egg.",
-		gambar: Menu1,
-	},
-	{
-		id: "2",
-		nama: "Mie Goreng",
-		harga: 20000,
-		kategori: "Main Course",
-		deskripsi: "Fried noodles with vegetables and chicken.",
-		gambar: Menu1,
-	},
-	{
-		id: "3",
-		nama: "Sate Ayam",
-		harga: 30000,
-		kategori: "Appetizer",
-		deskripsi: "Grilled chicken skewers served with peanut sauce.",
-		gambar: Menu1,
-	},
-	{
-		id: "4",
-		nama: "Gado-Gado",
-		harga: 22000,
-		kategori: "Salad",
-		deskripsi: "Indonesian salad with peanut sauce dressing.",
-		gambar: Menu1,
-	},
-	{
-		id: "5",
-		nama: "Es Teh Manis",
-		harga: 5000,
-		kategori: "Beverage",
-		deskripsi: "Sweet iced tea.",
-		gambar: Menu1,
-	},
-	{
-		id: "6",
-		nama: "Es Campur",
-		harga: 15000,
-		kategori: "Dessert",
-		deskripsi: "Mixed ice dessert with various toppings.",
-		gambar: Menu1,
-	},
-];
-
-export const columns = [
-	{
-		accessorKey: "nama",
-		header: "Nama",
-		cell: ({ row }) => <div className="capitalize">{row.getValue("nama")}</div>,
-	},
-	{
-		accessorKey: "deskripsi",
-		header: "deskripsi",
-		cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("deskripsi")}</div>
-		),
-	},
-	{
-		accessorKey: "gambar",
-		header: "Gambar",
-		cell: ({ row }) => (
-			<div className="capitalize rounded-md">
-				<Image
-					src={row.getValue("gambar")}
-					alt={row.getValue("nama")}
-					width={80}
-					height={80}
-					className="rounded-md"
-				/>
-			</div>
-		),
-	},
-	{
-		accessorKey: "kategori",
-		header: ({ column }) => {
-			return (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-				>
-					Kategori
-					<CaretSortIcon className="ml-2 h-4 w-4" />
-				</Button>
-			);
-		},
-		cell: ({ row }) => (
-			<div className="lowercase">{row.getValue("kategori")}</div>
-		),
-	},
-	{
-		accessorKey: "harga",
-		header: () => <div className="">Harga</div>,
-		cell: ({ row }) => {
-			const harga = parseFloat(row.getValue("harga"));
-
-			const formatted = new Intl.NumberFormat("id-ID", {
-				style: "currency",
-				currency: "IDR",
-			}).format(harga);
-
-			return <div className="font-medium">{formatted}</div>;
-		},
-	},
-	{
-		id: "actions",
-		enableHiding: false,
-		cell: ({ row }) => {
-			const payment = row.original;
-
-			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-8 w-8 p-0">
-							<span className="sr-only">Open menu</span>
-							<DotsHorizontalIcon className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem
-							onClick={() => navigator.clipboard.writeText(payment.id)}
-						>
-							Copy payment ID
-						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>View customer</DropdownMenuItem>
-						<DropdownMenuItem>View payment details</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			);
-		},
-	},
-];
+import { MdOutlineEdit, MdOutlineDelete } from "react-icons/md";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { FiTrash2 } from "react-icons/fi";
+import axios from "axios";
+import { toast } from "sonner";
+import UpdateMenu from "./components/UpdateMenu";
 
 const PageMenu = () => {
+	const [data, setData] = React.useState([]);
 	const [sorting, setSorting] = React.useState([]);
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({});
 	const [rowSelection, setRowSelection] = React.useState({});
+	const [openHapus, setOpenHapus] = React.useState(false);
+	const [selectedId, setSelectedId] = React.useState(null);
+
+	const fetchDataMenu = async () => {
+		const response = await axios.get(`http://localhost:8000/api/menu`);
+		setData(response.data.data);
+	};
+
+	const handleDelete = async () => {
+		try {
+			const response = await axios.delete(
+				`http://localhost:8000/api/menu/${selectedId}`
+			);
+			if (response.status === 200) {
+				toast.success("Berita berhasil dihapus");
+				setOpenHapus(false);
+				fetchDataMenu();
+			}
+		} catch (error) {
+			console.error("Error deleting berita:", error);
+			toast.error("Gagal menghapus berita");
+		}
+	};
+
+	const columns = [
+		{
+			accessorKey: "nama_menu",
+			header: "Nama Menu",
+			cell: ({ row }) => (
+				<div className="capitalize w-[200px] overflow-x-auto">
+					{row.getValue("nama_menu")}
+				</div>
+			),
+		},
+		{
+			accessorKey: "deskripsi",
+			header: "deskripsi",
+			cell: ({ row }) => (
+				<div className="capitalize w-[200px] overflow-x-auto">
+					{row.getValue("deskripsi")}
+				</div>
+			),
+		},
+		{
+			accessorKey: "gambar",
+			header: "Gambar",
+			cell: ({ row }) => (
+				<div className="capitalize rounded-md">
+					<Image
+						src={`http://localhost:8000/api/menu/view/${row.getValue(
+							"gambar"
+						)}`}
+						alt={row.getValue("gambar")}
+						width={80}
+						height={80}
+						className="rounded-md w-auto h-auto"
+						priority
+					/>
+				</div>
+			),
+		},
+		{
+			accessorKey: "kategori",
+			header: ({ column }) => {
+				return (
+					<Button
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Kategori
+						<CaretSortIcon className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
+			cell: ({ row }) => (
+				<div className="capitalize">
+					{row.getValue("kategori")
+						? row.getValue("kategori")
+						: "Tidak ada kategori"}{" "}
+				</div>
+			),
+		},
+		{
+			accessorKey: "harga",
+			header: () => <div className="">Harga</div>,
+			cell: ({ row }) => {
+				const harga = parseFloat(row.getValue("harga"));
+
+				const formatted = new Intl.NumberFormat("id-ID", {
+					style: "currency",
+					currency: "IDR",
+				}).format(harga);
+
+				return <div className="font-medium">{formatted}</div>;
+			},
+		},
+		{
+			id: "actions",
+			enableHiding: false,
+			cell: ({ row }) => {
+				const id = row.original.id;
+				const rowData = row.original;
+				return (
+					<div className="flex items-center gap-2">
+						<UpdateMenu
+							fetchDataMenu={fetchDataMenu}
+							id={id}
+							rowData={rowData}
+						/>
+						<Dialog open={openHapus} onOpenChange={setOpenHapus}>
+							<DialogTrigger asChild>
+								<Button
+									variant="outline"
+									size="icon"
+									className="shadow-none "
+									onClick={() => {
+										setSelectedId(id);
+									}}
+								>
+									<FiTrash2 />
+								</Button>
+							</DialogTrigger>
+							<DialogContent className="sm:max-w-[425px]">
+								<DialogHeader>
+									<DialogTitle>Hapus Menu</DialogTitle>
+									<DialogDescription>
+										Apakah anda yakin ingin menghapus menu ini?
+									</DialogDescription>
+								</DialogHeader>
+								<DialogFooter>
+									<Button
+										variant="destructive"
+										className="w-full"
+										onClick={() => handleDelete()}
+									>
+										Hapus
+									</Button>
+									<div className="w-full" onClick={() => setOpenHapus(false)}>
+										<Button variant="outline" className="w-full">
+											Batal
+										</Button>
+									</div>
+								</DialogFooter>
+							</DialogContent>
+						</Dialog>
+					</div>
+				);
+			},
+		},
+	];
 
 	const table = useReactTable({
-		data,
+		data: data,
 		columns,
 		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
@@ -204,7 +228,16 @@ const PageMenu = () => {
 			columnVisibility,
 			rowSelection,
 		},
+		initialState: {
+			pagination: {
+				pageSize: 4,
+			},
+		},
 	});
+
+	React.useEffect(() => {
+		fetchDataMenu();
+	}, []);
 
 	return (
 		<div className="w-full">
@@ -212,13 +245,13 @@ const PageMenu = () => {
 			<div className="flex items-center py-4 gap-2">
 				<Input
 					placeholder="Cari menu..."
-					value={table.getColumn("nama")?.getFilterValue() ?? ""}
+					value={table.getColumn("nama_menu")?.getFilterValue() ?? ""}
 					onChange={(event) =>
-						table.getColumn("nama")?.setFilterValue(event.target.value)
+						table.getColumn("nama_menu")?.setFilterValue(event.target.value)
 					}
 					className="max-w-sm"
 				/>
-				<TambahMenu />
+				<TambahMenu fetchDataMenu={fetchDataMenu} />
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">

@@ -29,6 +29,7 @@ import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
 import { PlusCircle } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { MdOutlineEdit } from "react-icons/md";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -40,9 +41,10 @@ const FormSchema = z.object({
 	harga: z.any(),
 });
 
-const TambahMenu = ({ fetchDataMenu }) => {
+const UpdateMenu = ({ fetchDataMenu, id, rowData }) => {
 	const [openTambah, setOpenTambah] = useState(false);
 	const [dataKategori, setDataKategori] = useState([]);
+
 	useEffect(() => {
 		const fetchDataKategori = async () => {
 			const response = await fetch(`http://localhost:8000/api/kategori`, {
@@ -58,15 +60,15 @@ const TambahMenu = ({ fetchDataMenu }) => {
 	const form = useForm({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
-			nama_menu: "",
-			deskripsi: "",
-			gambar: "",
-			nama_kategori: "",
-			harga: "",
+			nama_menu: rowData.nama_menu,
+			deskripsi: rowData.deskripsi,
+			gambar: rowData.gambar,
+			nama_kategori: rowData.kategori,
+			harga: rowData.harga,
 		},
 	});
 
-	const handleTambah = async (data) => {
+	const handleUpdate = async (data) => {
 		try {
 			const formData = new FormData();
 			formData.append("nama_menu", data.nama_menu);
@@ -75,13 +77,13 @@ const TambahMenu = ({ fetchDataMenu }) => {
 			formData.append("nama_kategori", data.nama_kategori);
 			formData.append("harga", data.harga);
 
-			const response = await fetch("http://localhost:8000/api/menu", {
-				method: "POST",
+			const response = await fetch(`http://localhost:8000/api/menu/${id}`, {
+				method: "PUT",
 				body: formData,
 			});
 
-			if (response.status === 201) {
-				toast.success("Menu berhasil ditambahkan");
+			if (response.status === 200) {
+				toast.success("Menu berhasil diupdate");
 				form.reset();
 				setOpenTambah(false);
 				fetchDataMenu();
@@ -95,19 +97,18 @@ const TambahMenu = ({ fetchDataMenu }) => {
 	return (
 		<Dialog open={openTambah} onOpenChange={setOpenTambah}>
 			<DialogTrigger asChild>
-				<Button>
-					<PlusCircle />
-					Tambah Menu
+				<Button variant="outline" size="icon">
+					<MdOutlineEdit />
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Tambah Menu</DialogTitle>
-					<DialogDescription>Tambahkan menu baru.</DialogDescription>
+					<DialogTitle>Update Menu</DialogTitle>
+					<DialogDescription>Update menu baru.</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(handleTambah)}
+						onSubmit={form.handleSubmit(handleUpdate)}
 						className="space-y-4"
 					>
 						<FormField
@@ -219,4 +220,4 @@ const TambahMenu = ({ fetchDataMenu }) => {
 	);
 };
 
-export default TambahMenu;
+export default UpdateMenu;

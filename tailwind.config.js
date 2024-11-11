@@ -8,6 +8,9 @@ module.exports = {
 	],
 	theme: {
 		extend: {
+			screens: {
+				'xs': '320px',
+			},
 			colors: {
 				headingText: "#FEA92B",
 				background: "hsl(var(--background))",

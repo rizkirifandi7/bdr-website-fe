@@ -16,7 +16,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
 	Select,
 	SelectContent,
@@ -26,93 +25,81 @@ import {
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
+import axios from "axios";
 import { PlusCircle } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { MdOutlineEdit } from "react-icons/md";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const FormSchema = z.object({
-	nama_menu: z.string().nonempty("Nama harus diisi."),
-	deskripsi: z.string().nonempty("Deskripsi harus diisi."),
-	gambar: z.any(),
+	nama: z.string().nonempty("Nama harus diisi."),
+	email: z.string().nonempty("Email harus diisi."),
 	nama_kategori: z.any(),
-	harga: z.any(),
+	role: z.any(),
 });
 
-const TambahMenu = ({ fetchDataMenu }) => {
+const UpdateUser = ({ fetchDataUser, rowData, id }) => {
 	const [openTambah, setOpenTambah] = useState(false);
-	const [dataKategori, setDataKategori] = useState([]);
-	useEffect(() => {
-		const fetchDataKategori = async () => {
-			const response = await fetch(`http://localhost:8000/api/kategori`, {
-				cache: "force-cache",
-			});
-			const data = await response.json();
-			setDataKategori(data.data);
-		};
-
-		fetchDataKategori();
-	}, []);
 
 	const form = useForm({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
-			nama_menu: "",
-			deskripsi: "",
-			gambar: "",
-			nama_kategori: "",
-			harga: "",
+			nama: rowData.nama,
+			email: rowData.email,
+			password: rowData.password,
+			role: rowData.role,
 		},
 	});
 
-	const handleTambah = async (data) => {
+	const hnadleEdit = async (data) => {
 		try {
 			const formData = new FormData();
-			formData.append("nama_menu", data.nama_menu);
-			formData.append("deskripsi", data.deskripsi);
-			formData.append("gambar", data.gambar[0]);
-			formData.append("nama_kategori", data.nama_kategori);
-			formData.append("harga", data.harga);
+			formData.append("nama", data.nama);
+			formData.append("email", data.email);
+			formData.append("password", data.password);
+			formData.append("role", data.role);
 
-			const response = await fetch("http://localhost:8000/api/menu", {
-				method: "POST",
-				body: formData,
-			});
+			const response = await axios.put(
+				`http://localhost:8000/api/user/${id}`,
+				formData,
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
-			if (response.status === 201) {
-				toast.success("Menu berhasil ditambahkan");
+			if (response.data.status === true) {
+				toast.success("User berhasil ditambahkan");
 				form.reset();
 				setOpenTambah(false);
-				fetchDataMenu();
+				fetchDataUser();
 			}
 		} catch (error) {
-			console.error("Error adding menu:", error);
-			toast.error("Gagal menambahkan menu");
+			console.error("Error adding user:", error);
+			toast.error("Gagal menambahkan user");
 		}
 	};
 
 	return (
 		<Dialog open={openTambah} onOpenChange={setOpenTambah}>
 			<DialogTrigger asChild>
-				<Button>
-					<PlusCircle />
-					Tambah Menu
+				<Button variant="outline" size="icon">
+					<MdOutlineEdit />
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Tambah Menu</DialogTitle>
-					<DialogDescription>Tambahkan menu baru.</DialogDescription>
+					<DialogTitle>Tambah User</DialogTitle>
+					<DialogDescription>Tambahkan user baru.</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(handleTambah)}
-						className="space-y-4"
-					>
+					<form onSubmit={form.handleSubmit(hnadleEdit)} className="space-y-4">
 						<FormField
 							control={form.control}
-							name="nama_menu"
+							name="nama"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Nama</FormLabel>
@@ -130,14 +117,14 @@ const TambahMenu = ({ fetchDataMenu }) => {
 						/>
 						<FormField
 							control={form.control}
-							name="deskripsi"
+							name="email"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Deskripsi</FormLabel>
+									<FormLabel>Email</FormLabel>
 									<FormControl>
 										<Input
 											className="shadow-none"
-											placeholder="masukkan deskripsi..."
+											placeholder="masukkan email..."
 											{...field}
 											type="text"
 										/>
@@ -149,16 +136,16 @@ const TambahMenu = ({ fetchDataMenu }) => {
 
 						<FormField
 							control={form.control}
-							name="harga"
+							name="password"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Harga</FormLabel>
+									<FormLabel>Password</FormLabel>
 									<FormControl>
 										<Input
 											className="shadow-none"
-											placeholder="masukkan harga..."
+											placeholder="masukkan password..."
 											{...field}
-											type="number"
+											type="text"
 										/>
 									</FormControl>
 									<FormMessage />
@@ -167,10 +154,10 @@ const TambahMenu = ({ fetchDataMenu }) => {
 						/>
 						<FormField
 							control={form.control}
-							name="nama_kategori"
+							name="role"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Kategori</FormLabel>
+									<FormLabel>Role</FormLabel>
 									<FormControl>
 										<Select
 											onValueChange={field.onChange}
@@ -178,20 +165,12 @@ const TambahMenu = ({ fetchDataMenu }) => {
 										>
 											<FormControl>
 												<SelectTrigger>
-													<SelectValue placeholder="kategori" />
+													<SelectValue placeholder="role" />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												{dataKategori.map((kategori) => {
-													return (
-														<SelectItem
-															key={kategori.id}
-															value={kategori.nama_kategori}
-														>
-															{kategori.nama_kategori}
-														</SelectItem>
-													);
-												})}
+												<SelectItem value="admin">Admin</SelectItem>
+												<SelectItem value="pegawai">Pegawai</SelectItem>
 											</SelectContent>
 										</Select>
 									</FormControl>
@@ -199,14 +178,6 @@ const TambahMenu = ({ fetchDataMenu }) => {
 								</FormItem>
 							)}
 						/>
-						<div className="space-y-2">
-							<Label className="">Gambar</Label>
-							<Input
-								type="file"
-								className="shadow-none h-full py-1.5"
-								onChange={(e) => form.setValue("gambar", e.target.files)}
-							/>
-						</div>
 						<DialogFooter>
 							<Button type="submit" className="w-full mt-2">
 								Submit
@@ -219,4 +190,4 @@ const TambahMenu = ({ fetchDataMenu }) => {
 	);
 };
 
-export default TambahMenu;
+export default UpdateUser;

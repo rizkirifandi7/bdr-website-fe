@@ -53,7 +53,7 @@ import { LogOut } from "lucide-react";
 const data = {
 	navMain: [
 		{
-			title: "Getting Started",
+			title: "Kelola Menu",
 			url: "#",
 			items: [
 				{
@@ -62,19 +62,31 @@ const data = {
 					icon: <MdOutlineSpaceDashboard />,
 				},
 				{
-					title: "Kelola Menu",
+					title: "Menu",
 					url: "/dashboard/menu",
 					icon: <LuMenuSquare />,
 				},
 				{
-					title: "Pesanan",
-					url: "/dashboard/pesanan",
-					icon: <MdOutlineBorderAll />,
+					title: "Kategori Menu",
+					url: "/dashboard/kategori-menu",
+					icon: <LuMenuSquare />,
 				},
+
 				{
 					title: "Meja",
 					url: "/dashboard/meja",
 					icon: <MdOutlineTableRestaurant />,
+				},
+			],
+		},
+		{
+			title: "Kelola Pesanan",
+			url: "#",
+			items: [
+				{
+					title: "Pesanan",
+					url: "/dashboard/pesanan",
+					icon: <MdOutlineBorderAll />,
 				},
 				{
 					title: "Reservasi",
@@ -86,7 +98,12 @@ const data = {
 					url: "/dashboard/feedback",
 					icon: <MdOutlineFeedback />,
 				},
-
+			],
+		},
+		{
+			title: "User",
+			url: "#",
+			items: [
 				{
 					title: "User",
 					url: "/dashboard/user",
