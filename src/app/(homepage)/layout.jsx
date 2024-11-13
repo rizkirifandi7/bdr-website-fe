@@ -8,12 +8,10 @@ export const metadata = {
 
 export default function HomeRoot({ children }) {
 	return (
-		<html lang="en">
-			<body>
-				<Navbar />
-				{children}
-				<Footer />
-			</body>
-		</html>
+		<>
+			<Navbar />
+			{children}
+			<Footer />
+		</>
 	);
 }

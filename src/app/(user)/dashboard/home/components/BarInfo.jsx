@@ -36,6 +36,7 @@ const chartData = [
 	{ month: "June", desktop: 214, mobile: 140 },
 ];
 
+      
 const chartConfig = {
 	desktop: {
 		label: "Desktop",

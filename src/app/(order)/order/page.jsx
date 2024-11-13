@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import { IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import {
 	Drawer,
 	DrawerContent,
@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 
 import ButtonCheckout from "@/app/(order)/order/components/ButtonCheckout";
 import MenuFilter from "./components/MenuFilter";
+import { FaArrowLeft } from "react-icons/fa6";
 
 const PageOrder = () => {
 	const [menuData, setMenuData] = useState([]);
@@ -44,7 +45,6 @@ const PageOrder = () => {
 			const data = await response.json();
 			setMenuData(data.data);
 		};
-
 		fetchData();
 	}, []);
 
@@ -53,12 +53,25 @@ const PageOrder = () => {
 		setIsDrawerOpen(false);
 	};
 
+	const categorizedMenuData = menuData.reduce((acc, item) => {
+		if (!acc[item.kategori]) acc[item.kategori] = [];
+		acc[item.kategori].push(item);
+		return acc;
+	}, {});
+
 	const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 
 	return (
 		<section>
 			<div className="max-w-[498px] mx-auto min-h-screen pb-28 bg-[#FAFAFA] relative border-x">
-				<div className="flex flex-col justify-center items-center hero-header h-[170px] rounded-b-md">
+				<div className="fixed top-0 ml-2 mt-2 left-1/2 transform -translate-x-1/2 z-50 max-w-[492px] w-full">
+					<button className="bg-white rounded-lg p-3 ">
+						<Link href="/mode">
+							<FaArrowLeft className="text-black" />
+						</Link>
+					</button>
+				</div>
+				<div className="flex flex-col justify-center items-center hero-header h-[180px] rounded-b-md  ">
 					<Image
 						src="/logobdr.png"
 						width={50}
@@ -66,10 +79,9 @@ const PageOrder = () => {
 						alt="logo"
 						className="mb-1"
 					/>
-					<p className="text-lg font-bold text-headingText font-custom mb-2">
+					<h1 className="text-2xl font-bold text-headingText mb-2">
 						Bakso Dono Reborn
-					</p>
-					<h1 className="text-2xl font-bold text-white">ORDER MENU</h1>
+					</h1>
 				</div>
 				<div className="flex flex-col bg-white m-4 rounded-lg border">
 					<div className="flex justify-between items-center p-4">
@@ -93,21 +105,20 @@ const PageOrder = () => {
 				</div>
 
 				<MenuFilter filterMenu={filterMenu} setFilterMenu={setFilterMenu} />
-
-				<MenuKategori filtermenu={"Mie Baso"}>
-					{menuData.map((data) => (
-						<MenuOrder
-							key={data.id}
-							data={data}
-							addToCart={addToCart}
-							removeFromCart={removeFromCart}
-							cart={cart}
-						/>
-					))}
-				</MenuKategori>
+				<MenuKategori
+					filterMenu={filterMenu}
+					menuData={categorizedMenuData}
+					addToCart={addToCart}
+					removeFromCart={removeFromCart}
+					cart={cart}
+				/>
 
 				{totalQuantity > 0 && (
-					<ButtonCheckout link={"/checkout"} totalQuantity={totalQuantity} getTotalPrice={getTotalPrice}/>
+					<ButtonCheckout
+						link={"/checkout"}
+						totalQuantity={totalQuantity}
+						getTotalPrice={getTotalPrice}
+					/>
 				)}
 
 				{tableNumber === "" && isDrawerOpen && (

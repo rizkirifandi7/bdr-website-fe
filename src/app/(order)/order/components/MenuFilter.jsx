@@ -16,13 +16,9 @@ const MenuFilter = ({ filterMenu, setFilterMenu }) => {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [kategori, setKategori] = useState([]);
 
-	console.log(kategori);
-
 	useEffect(() => {
 		const fetchData = async () => {
-			const response = await fetch("http://localhost:8000/api/kategori", {
-				cache: "force-cache",
-			});
+			const response = await fetch("http://localhost:8000/api/kategori");
 			const data = await response.json();
 			setKategori(data.data);
 		};
@@ -33,6 +29,12 @@ const MenuFilter = ({ filterMenu, setFilterMenu }) => {
 	const handleFilterChange = (filter) => {
 		setFilterMenu(filter);
 		setIsDrawerOpen(false);
+
+		// Scroll to the corresponding menu category section
+		const categorySection = document.getElementById(filter.toLowerCase());
+		if (categorySection) {
+			categorySection.scrollIntoView({ behavior: "smooth" });
+		}
 	};
 
 	return (

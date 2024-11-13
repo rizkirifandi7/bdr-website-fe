@@ -1,16 +1,6 @@
 "use client";
 
 import * as React from "react";
-
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from "./ui/breadcrumb";
-
 import { Separator } from "@/components/ui/separator";
 import {
 	Sidebar,
@@ -47,8 +37,13 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
+import { removeCookie } from "@/actions/cookies";
+import { FaRegUser } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { Logout } from "@/services/api/auth";
+import { toast } from "sonner";
+import { Button } from "./ui/button";
 
 const data = {
 	navMain: [
@@ -115,6 +110,23 @@ const data = {
 };
 
 const SidebarDashboard = ({ children }) => {
+	const router = useRouter();
+
+	const handleLogout = async () => {
+		try {
+			const response = await Logout();
+
+			if (response.status === true) {
+				removeCookie("auth_session");
+				router.push("/auth/signin");
+				toast.success("Logout berhasil.");
+			}
+		} catch (error) {
+			toast.error("Logout gagal.");
+			console.error("Error logging out:", error);
+		}
+	};
+
 	return (
 		<>
 			<Sidebar>
@@ -123,7 +135,11 @@ const SidebarDashboard = ({ children }) => {
 						<SidebarMenuItem>
 							<SidebarMenuButton size="lg">
 								<div className="">
-									<Image src={LogoBDR} className="w-10 h-10" alt="logo" />
+									<Image
+										src={LogoBDR}
+										className="w-10 h-10"
+										alt="logo"
+									/>
 								</div>
 								<div className="flex flex-col gap-0.5 leading-none">
 									<span className="font-bold text-sm">Bakso Dono Reborn</span>
@@ -161,35 +177,23 @@ const SidebarDashboard = ({ children }) => {
 					<div className="flex items-center h-16 gap-2">
 						<SidebarTrigger className="-ml-1" />
 						<Separator orientation="vertical" className="mr-2 h-4" />
-						<Breadcrumb>
-							<BreadcrumbList>
-								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbLink href="#">
-										Building Your Application
-									</BreadcrumbLink>
-								</BreadcrumbItem>
-								<BreadcrumbSeparator className="hidden md:block" />
-								<BreadcrumbItem>
-									<BreadcrumbPage>Data Fetching</BreadcrumbPage>
-								</BreadcrumbItem>
-							</BreadcrumbList>
-						</Breadcrumb>
 					</div>
 					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="outline" className="capitalize">
+						<DropdownMenuTrigger>
+							<p className="inline-flex items-center gap-2 px-3 py-1 border rounded-md text-base font-medium">
+								<FaRegUser />
 								Admin
-							</Button>
+							</p>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent className="w-auto me-8">
+						<DropdownMenuContent className="w-auto me-5">
 							<DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-							<Link to="/login" onClick={() => RemoveCookies()}>
+							<Button variant="outline" href="/auth/signin" onClick={() => handleLogout()}>
 								<DropdownMenuItem>
 									<LogOut />
 									<span>Keluar</span>
 								</DropdownMenuItem>
-							</Link>
+							</Button>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</header>

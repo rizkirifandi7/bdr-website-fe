@@ -1,6 +1,6 @@
 import { formatRupiah } from "@/lib/formatRupiah";
 
-const OrderSummary = ({ totalPrice, tax, total, discount }) => {
+const OrderSummary = ({ totalPrice, total, discount, tax }) => {
 	return (
 		<div className="bg-white m-4">
 			<div className="p-4 border rounded-lg">

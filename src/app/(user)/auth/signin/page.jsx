@@ -24,6 +24,10 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import LogoBDR from "@/assets/logobdr.png";
+import { setCookie } from "@/actions/cookies";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { toast } from "sonner";
 
 const FormSchema = z.object({
 	email: z
@@ -36,7 +40,9 @@ const FormSchema = z.object({
 	password: z.string().trim().min(1, "Password cannot be empty"),
 });
 
-const Login = () => {
+const PageLogin = () => {
+	const router = useRouter();
+
 	const form = useForm({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
@@ -46,8 +52,28 @@ const Login = () => {
 	});
 
 	const onLogin = async (data) => {
+		const { email, password } = data;
+
 		try {
-			console.log(data);
+			const response = await axios.post(
+				"http://localhost:8000/api/auth/login",
+				{
+					email,
+					password,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
+			if (response.data.status === true) {
+				setCookie("auth_session", response.data.data.token);
+				router.push("/dashboard/home");
+			} else {
+				toast.error("Anda tidak memiliki akses.");
+			}
 		} catch (error) {
 			console.error("Error login:", error);
 		}
@@ -81,7 +107,7 @@ const Login = () => {
 											<FormLabel>Email</FormLabel>
 											<FormControl>
 												<Input
-													className="text-white placeholder:text-slate-400 p-6 text-base"
+													className=" p-6 text-base"
 													placeholder="masukkan email..."
 													{...field}
 													type="text"
@@ -99,7 +125,7 @@ const Login = () => {
 											<FormLabel>Password</FormLabel>
 											<FormControl>
 												<Input
-													className="text-white placeholder:text-slate-400 p-6 text-base"
+													className=" p-6 text-base"
 													placeholder="masukkan password..."
 													{...field}
 													type="password"
@@ -109,7 +135,7 @@ const Login = () => {
 										</FormItem>
 									)}
 								/>
-								<Button type="submit" className="w-full p-6 ">
+								<Button type="submit" className="w-full p-6">
 									Login
 								</Button>
 							</form>
@@ -121,4 +147,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default PageLogin;

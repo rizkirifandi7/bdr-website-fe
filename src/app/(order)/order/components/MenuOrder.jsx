@@ -31,7 +31,7 @@ const MenuOrder = ({ data, addToCart, removeFromCart, cart }) => {
 						alt={data.nama_menu}
 						width={197}
 						height={170}
-						className="w-full h-[150px] sm:h-[170px] object-cover bg-center rounded-lg"
+						className="h-auto w-auto object-cover bg-center rounded-lg"
 					/>
 					<h3 className="font-semibold text-sm sm:text-base w-[170px] px-2 mt-3 truncate text-center">
 						{data.nama_menu}

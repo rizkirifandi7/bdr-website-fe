@@ -1,5 +1,6 @@
 "use client";
 
+import { setCookie } from "@/actions/cookies";
 import React, { createContext, useEffect, useState, useContext } from "react";
 
 const CartContext = createContext();
@@ -8,7 +9,7 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
 	const [cart, setCart] = useState([]);
-	const [typeOrder, setTypeOrder] = useState("Dine In");
+	const [typeOrder, setTypeOrder] = useState("");
 	const [tableNumber, setTableNumber] = useState("");
 
 	useEffect(() => {
@@ -25,6 +26,7 @@ export const CartProvider = ({ children }) => {
 		localStorage.setItem("cart", JSON.stringify(cart));
 		localStorage.setItem("tableNumber", tableNumber);
 		localStorage.setItem("typeOrder", typeOrder);
+		setCookie("typeOrder", typeOrder);
 	}, [cart, tableNumber, typeOrder]);
 
 	const addToCart = (item) => {
@@ -57,30 +59,6 @@ export const CartProvider = ({ children }) => {
 		});
 	};
 
-	const placeOrder = async (id_meja, total, mode, items) => {
-		try {
-			await fetch("http://localhost:8000/api/pesanan", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					id_meja,
-					total,
-					mode,
-					items,
-				}),
-			});
-
-			localStorage.removeItem("cart");
-			localStorage.removeItem("tableNumber");
-			localStorage.removeItem("typeOrder");
-			setCart([]);
-			setTableNumber("");
-			setTypeOrder("");
-		} catch (error) {
-			console.error("Error placing order:", error);
-		}
-	};
-
 	const updateTableNumber = (number) => setTableNumber(number);
 	const updateTypeOrder = (type) => setTypeOrder(type);
 	const getTotalPrice = () =>
@@ -97,8 +75,10 @@ export const CartProvider = ({ children }) => {
 				typeOrder,
 				updateTypeOrder,
 				getTotalPrice,
-				placeOrder,
 				setTableNumber,
+				setCart,
+				setTableNumber,
+				setTypeOrder,
 			}}
 		>
 			{children}

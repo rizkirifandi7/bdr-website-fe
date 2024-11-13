@@ -4,7 +4,6 @@ import ItemMenu from "@/components/ItemMenu";
 import OrderSection from "@/components/OrderSection";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/CartContext";
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { FaArrowLeft } from "react-icons/fa6";
@@ -13,22 +12,74 @@ import { Badge } from "@/components/ui/badge";
 import { MdAdd } from "react-icons/md";
 import { formatRupiah } from "@/lib/formatRupiah";
 import { MdOutlineTableBar } from "react-icons/md";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const PageCheckout = () => {
-	const { cart, tableNumber, typeOrder, getTotalPrice, placeOrder } = useCart();
+	const router = useRouter();
+	const {
+		cart,
+		tableNumber,
+		typeOrder,
+		getTotalPrice,
+		setCart,
+		setTableNumber,
+		setTypeOrder,
+	} = useCart();
+
 	const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 	const totalPrice = getTotalPrice();
-	const tax = (5 * totalPrice) / 100;
-	const total = totalPrice + tax;
+
+	const placeOrder = async () => {
+		try {
+			const itemsToOrder = cart.map((item) => ({
+				id_menu: item.id,
+				quantity: item.quantity,
+				harga: item.harga,
+				nama: item.nama_menu,
+			}));
+
+			const response = await fetch("http://localhost:8000/api/pesanan", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					id_meja: tableNumber,
+					total: totalPrice,
+					mode: typeOrder,
+					items: itemsToOrder,
+				}),
+			});
+
+			if (!response.ok) {
+				toast.error("Failed to place order");
+				return;
+			}
+
+			const data = await response.json();
+			const { status, message, data: orderData, token } = data;
+
+			if (status) {
+				toast.success(message);
+				localStorage.removeItem("cart");
+				localStorage.removeItem("tableNumber");
+				localStorage.removeItem("typeOrder");
+				setCart([]);
+				setTableNumber("");
+				setTypeOrder("");
+
+				const redirectUrl = `https://app.sandbox.midtrans.com/snap/v4/redirection/${token}`;
+				router.push(redirectUrl);
+			} else {
+				toast.error(message);
+			}
+		} catch (error) {
+			console.error("Error placing order:", error);
+			toast.error("An error occurred while placing the order");
+		}
+	};
 
 	const handlePlaceOrder = async () => {
-		const itemsToOrder = cart.map((item) => ({
-			id_menu: item.id,
-			quantity: item.quantity,
-			harga: item.harga,
-		}));
-
-		await placeOrder(tableNumber, total, typeOrder, itemsToOrder);
+		await placeOrder();
 	};
 
 	return (
@@ -96,8 +147,8 @@ const PageCheckout = () => {
 
 				<OrderSummary
 					totalPrice={totalPrice}
-					tax={tax}
-					total={total}
+					tax={0}
+					total={totalPrice}
 					discount={0}
 				/>
 			</div>
@@ -106,16 +157,14 @@ const PageCheckout = () => {
 				<div className="flex justify-between items-center w-full h-[100px] rounded-t-lg shadow-xl bg-orange-50 border-t px-4">
 					<div className="text-start">
 						<p className="text-base">Total Payment</p>
-						<p className="font-bold text-lg">{formatRupiah(total)}</p>
+						<p className="font-bold text-lg">{formatRupiah(totalPrice)}</p>
 					</div>
-					<Link href="/order">
-						<Button
-							className="bg-orange-500 hover:bg-headingText text-white text-base font-semibold h-[60px] w-fit"
-							onClick={handlePlaceOrder}
-						>
-							Process to Payment
-						</Button>
-					</Link>
+					<Button
+						className="bg-orange-500 hover:bg-headingText text-white text-base font-semibold h-[60px] w-fit"
+						onClick={handlePlaceOrder}
+					>
+						Process to Payment
+					</Button>
 				</div>
 			</div>
 		</OrderSection>

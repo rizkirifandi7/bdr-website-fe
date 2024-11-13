@@ -232,8 +232,12 @@ const PagePesanan = () => {
 														<p className="text-base">Subtotal</p>
 														<p className="text-base">
 															{formatRupiah(
-																selectedRowData.total -
-																	(selectedRowData.total * 5) / 100
+																selectedRowData.item_pesanan.reduce(
+																	(acc, item) => {
+																		return acc + item.jumlah * item.menu.harga;
+																	},
+																	0
+																)
 															)}
 														</p>
 													</div>
@@ -248,7 +252,16 @@ const PagePesanan = () => {
 													<div className="flex justify-between items-center gap-2">
 														<p className="text-base">Service Charge (5%)</p>
 														<p className="text-base">
-															{formatRupiah((selectedRowData.total * 5) / 100)}
+															{formatRupiah(
+																selectedRowData.item_pesanan.reduce(
+																	(acc, item) => {
+																		return (
+																			acc + item.jumlah * item.menu.harga * 0.05
+																		);
+																	},
+																	0
+																)
+															)}
 														</p>
 													</div>
 													<div className="flex justify-between items-center gap-2 mt-2 border-t">
