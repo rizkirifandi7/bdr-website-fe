@@ -1,101 +1,39 @@
 "use client";
-
+import React, { useState, useEffect } from "react";
 import FilterMenu from "./components/FilterMenu";
-import { CiBowlNoodles } from "react-icons/ci";
-import { GiNoodles } from "react-icons/gi";
-import { TbSoup } from "react-icons/tb";
-import Menu1 from "@/assets/bg-hero.jpg";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-
-const dataFilterMenu = [
-	{
-		id: 1,
-		namafilter: "Mie Yamin",
-		stock: "10",
-		Icon: <GiNoodles />,
-	},
-	{
-		id: 2,
-		namafilter: "Mie Ayam",
-		stock: "15",
-		Icon: <CiBowlNoodles />,
-	},
-	{
-		id: 3,
-		namafilter: "Bakso Urat",
-		stock: "20",
-		Icon: <TbSoup />,
-	},
-	{
-		id: 4,
-		namafilter: "Bakso Halus",
-		stock: "25",
-		Icon: <CiBowlNoodles />,
-	},
-	{
-		id: 5,
-		namafilter: "Soto Ayam",
-		stock: "30",
-		Icon: <CiBowlNoodles />,
-	},
-	{
-		id: 6,
-		namafilter: "Nasi Goreng",
-		stock: "12",
-		Icon: <CiBowlNoodles />,
-	},
-	{
-		id: 7,
-		namafilter: "Ayam Geprek",
-		stock: "18",
-		Icon: <CiBowlNoodles />,
-	},
-	{
-		id: 8,
-		namafilter: "Es Teh Manis",
-		stock: "50",
-		Icon: <CiBowlNoodles />,
-	},
-	{
-		id: 9,
-		namafilter: "Es Jeruk",
-		stock: "50",
-		Icon: <CiBowlNoodles />,
-	},
-	{
-		id: 10,
-		namafilter: "Es Campur",
-		stock: "50",
-		Icon: <CiBowlNoodles />,
-	},
-];
-
-const formatUang = (uang) => {
-	return new Intl.NumberFormat("id-ID", {
-		style: "currency",
-		currency: "IDR",
-	}).format(uang);
-};
+import { MdOutlineFoodBank } from "react-icons/md";
 
 const MenuPage = () => {
 	const [dataMenus, setDataMenus] = useState([]);
+	const [dataFilterMenu, setDataFilterMenu] = useState([]);
+	const [selectedCategory, setSelectedCategory] = useState(null);
 
-	console.log("data data:", dataMenus);
+	const fetchData = async () => {
+		const response = await fetch("http://localhost:8000/api/menu");
+		const data = await response.json();
+		setDataMenus(data.data);
+	};
+
+	const fetchKategori = async () => {
+		const response = await fetch("http://localhost:8000/api/kategori");
+		const data = await response.json();
+		setDataFilterMenu(data.data);
+	};
 
 	useEffect(() => {
-		const fetchData = async () => {
-			const response = await fetch("http://localhost:8000/api/menu", {
-				cache: "force-cache",
-			});
-			const data = await response.json();
-			setDataMenus(data.data);
-		};
-
 		fetchData();
+		fetchKategori();
 	}, []);
+
+	const handleCategorySelect = (category) => {
+		setSelectedCategory(category);
+	};
+
+	const filteredMenus = selectedCategory
+		? dataMenus.filter((menu) => menu.id_kategori === selectedCategory.id)
+		: dataMenus;
 
 	return (
 		<div className="">
@@ -108,9 +46,8 @@ const MenuPage = () => {
 						{dataFilterMenu.map((data) => (
 							<FilterMenu
 								key={data.id}
-								namafilter={data.namafilter}
-								stock={data.stock}
-								Icon={data.Icon}
+								namafilter={data.nama_kategori}
+								onClick={() => handleCategorySelect(data)}
 							/>
 						))}
 					</div>
@@ -121,10 +58,10 @@ const MenuPage = () => {
 							</h1>
 							<hr className="w-full" />
 						</div>
-						<div className="grid grid-cols-4 gap-6 mt-4">
-							{dataMenus?.map((data) => (
-								<Card key={data.id} className="flex-col rounded-md p-3">
-									<Link href={`menu/${data.id}`}>
+						{filteredMenus.length > 0 ? (
+							<div className="grid grid-cols-4 gap-6 mt-4">
+								{filteredMenus.map((data) => (
+									<Card key={data.id} className="flex-col rounded-md p-3">
 										<div className="bg-slate-100 rounded-lg">
 											<Image
 												src={`http://localhost:8000/api/menu/view/${data.gambar}`}
@@ -140,22 +77,17 @@ const MenuPage = () => {
 												{data.deskripsi}
 											</p>
 										</div>
-									</Link>
-									{/* <div className="flex justify-between items-center mt-2">
-										<p className="text-base font-semibold">
-											{formatUang(data.harga)}
-										</p>
-										<Button
-											className="hover:bg-headingText hover:text-white"
-											size="icon"
-											variant="outline"
-										>
-											<MdOutlineAddShoppingCart />
-										</Button>
-									</div> */}
-								</Card>
-							))}
-						</div>
+									</Card>
+								))}
+							</div>
+						) : (
+							<div className="flex flex-col h-[500px] justify-center items-center">
+								<MdOutlineFoodBank className="text-5xl" />
+								<h1 className="text-center text-2xl font-semibold">
+									Tidak ada menu
+								</h1>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

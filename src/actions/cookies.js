@@ -17,7 +17,7 @@ const getCookie = async (name) => {
 };
 
 const removeCookie = async (name) => {
-	await cookies().set(name, null);
+	await cookies().set(name, "");
 };
 
 export { setCookie, removeCookie, getCookie };

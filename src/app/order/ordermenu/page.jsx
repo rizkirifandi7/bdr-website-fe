@@ -1,10 +1,9 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowForward } from "react-icons/io";
 import {
 	Drawer,
 	DrawerContent,
@@ -14,15 +13,15 @@ import {
 	DrawerTrigger,
 } from "@/components/ui/drawer";
 import Link from "next/link";
-import MenuOrder from "./components/MenuOrder";
 import MenuKategori from "./components/MenuKategori";
 import { useCart } from "@/hooks/CartContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import ButtonCheckout from "@/app/(order)/order/components/ButtonCheckout";
 import MenuFilter from "./components/MenuFilter";
 import { FaArrowLeft } from "react-icons/fa6";
+import ButtonCheckout from "./components/ButtonCheckout";
+import ButtonFixed from "./components/ButtonFixed";
 
 const PageOrder = () => {
 	const [menuData, setMenuData] = useState([]);
@@ -38,6 +37,7 @@ const PageOrder = () => {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 	const [tableNumberInput, setTableNumberInput] = useState("");
 	const [filterMenu, setFilterMenu] = useState("Mie Bakso");
+	const [errorMessage, setErrorMessage] = useState("");
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -49,8 +49,21 @@ const PageOrder = () => {
 	}, []);
 
 	const handleSaveTableNumber = () => {
-		updateTableNumber(tableNumberInput);
-		setIsDrawerOpen(false);
+		if (tableNumberInput.trim() === "") {
+			setErrorMessage("Table number is required");
+		} else {
+			updateTableNumber(tableNumberInput);
+			setIsDrawerOpen(false);
+			setErrorMessage("");
+		}
+	};
+
+	const handleDrawerChange = (isOpen) => {
+		if (tableNumber === "") {
+			setIsDrawerOpen(true);
+		} else {
+			setIsDrawerOpen(isOpen);
+		}
 	};
 
 	const categorizedMenuData = menuData.reduce((acc, item) => {
@@ -64,13 +77,7 @@ const PageOrder = () => {
 	return (
 		<section>
 			<div className="max-w-[498px] mx-auto min-h-screen pb-28 bg-[#FAFAFA] relative border-x">
-				<div className="fixed top-0 ml-2 mt-2 left-1/2 transform -translate-x-1/2 z-50 max-w-[492px] w-full">
-					<button className="bg-white rounded-lg p-3 ">
-						<Link href="/mode">
-							<FaArrowLeft className="text-black" />
-						</Link>
-					</button>
-				</div>
+				<ButtonFixed href="/order/tipeorder" icon={<FaArrowLeft />} />
 				<div className="flex flex-col justify-center items-center hero-header h-[180px] rounded-b-md  ">
 					<Image
 						src="/logobdr.png"
@@ -84,17 +91,28 @@ const PageOrder = () => {
 					</h1>
 				</div>
 				<div className="flex flex-col bg-white m-4 rounded-lg border">
-					<div className="flex justify-between items-center p-4">
-						<div className="flex flex-col gap-1">
-							<p className="font-semibold text-base">
-								Table {tableNumber === "" ? 0 : tableNumber}
-							</p>
-							<p className="text-sm text-gray-400">Open Today, 08:00-23:00</p>
+					{typeOrder === "Dine In" ? (
+						<div className="flex justify-between items-center p-4">
+							<div className="flex flex-col gap-1">
+								<p className="font-semibold text-base">Table {tableNumber}</p>
+								<p className="text-sm text-gray-400">Open Today, 08:00-23:00</p>
+							</div>
+							<Link href="operasional">
+								<IoIosArrowForward />
+							</Link>
 						</div>
-						<Link href="operasional">
-							<IoIosArrowForward />
-						</Link>
-					</div>
+					) : (
+						<div className="flex justify-between items-center p-4">
+							<div className="flex flex-col gap-1">
+								<p className="font-semibold text-base">{tableNumber}</p>
+								<p className="text-sm text-gray-400">Open Today, 08:00-23:00</p>
+							</div>
+							<Link href="operasional">
+								<IoIosArrowForward />
+							</Link>
+						</div>
+					)}
+
 					<Separator />
 					<div className="flex justify-between items-center p-4">
 						<p className="text-sm">Order Type</p>
@@ -115,33 +133,52 @@ const PageOrder = () => {
 
 				{totalQuantity > 0 && (
 					<ButtonCheckout
-						link={"/checkout"}
+						link={"/order/checkout"}
 						totalQuantity={totalQuantity}
 						getTotalPrice={getTotalPrice}
 					/>
 				)}
 
 				{tableNumber === "" && isDrawerOpen && (
-					<Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+					<Drawer open={isDrawerOpen} onOpenChange={handleDrawerChange}>
 						<DrawerTrigger className="hidden">Open</DrawerTrigger>
-						<DrawerContent className="w-[480px] mx-auto h-[300px]">
+						<DrawerContent className="w-full md:w-[480px] mx-auto h-[300px]">
 							<DrawerHeader>
-								<DrawerTitle>Dine In</DrawerTitle>
+								<DrawerTitle>{typeOrder}</DrawerTitle>
 								<DrawerDescription>
-									Please input your table number
+									Please input your data to continue
 								</DrawerDescription>
 							</DrawerHeader>
 
-							<div className="flex flex-col gap-2 m-4">
-								<Label>Table Number</Label>
-								<Input
-									type="text"
-									placeholder="Table number"
-									value={tableNumberInput}
-									onChange={(e) => setTableNumberInput(e.target.value)}
-									className="w-full py-6 border rounded-lg"
-								/>
-							</div>
+							{typeOrder === "Dine In" ? (
+								<div className="flex flex-col gap-2 m-4">
+									<Label>Table Number</Label>
+									<Input
+										type="number"
+										placeholder="Table number"
+										value={tableNumberInput}
+										onChange={(e) => setTableNumberInput(e.target.value)}
+										className="w-full py-6 border rounded-lg"
+									/>
+									{errorMessage && (
+										<p className="text-red-500 text-sm">{errorMessage}</p>
+									)}
+								</div>
+							) : (
+								<div className="flex flex-col gap-2 m-4">
+									<Label>Input Your Name</Label>
+									<Input
+										type="text"
+										placeholder="Input Your Name"
+										value={tableNumberInput}
+										onChange={(e) => setTableNumberInput(e.target.value)}
+										className="w-full py-6 border rounded-lg"
+									/>
+									{errorMessage && (
+										<p className="text-red-500 text-sm">{errorMessage}</p>
+									)}
+								</div>
+							)}
 
 							<div className="m-4">
 								<Button

@@ -25,25 +25,39 @@ import {
 	ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A bar chart with a custom label";
+// Fungsi untuk mengolah data menu
+const processMenuData = (orders) => {
+	// Menghitung jumlah dan pendapatan per menu
+	const menuStats = orders.reduce((acc, order) => {
+		order.item_pesanan.forEach((item) => {
+			const menuName = item.menu.nama_menu;
+			if (!acc[menuName]) {
+				acc[menuName] = {
+					menu: menuName,
+					jumlah: 0,
+					pendapatan: 0,
+				};
+			}
+			acc[menuName].jumlah += item.jumlah;
+			acc[menuName].pendapatan += item.subtotal;
+		});
+		return acc;
+	}, {});
 
-const chartData = [
-	{ month: "January", desktop: 186, mobile: 80 },
-	{ month: "February", desktop: 305, mobile: 200 },
-	{ month: "March", desktop: 237, mobile: 120 },
-	{ month: "April", desktop: 73, mobile: 190 },
-	{ month: "May", desktop: 209, mobile: 130 },
-	{ month: "June", desktop: 214, mobile: 140 },
-];
+	// Mengubah object menjadi array dan mengurutkan berdasarkan jumlah pesanan
+	return Object.values(menuStats)
+		.sort((a, b) => b.jumlah - a.jumlah)
+		.slice(0, 6); // Mengambil 6 menu teratas
+};
 
-      
+// Konfigurasi chart
 const chartConfig = {
-	desktop: {
-		label: "Desktop",
+	jumlah: {
+		label: "Jumlah Terjual",
 		color: "hsl(var(--chart-1))",
 	},
-	mobile: {
-		label: "Mobile",
+	pendapatan: {
+		label: "Total Pendapatan",
 		color: "hsl(var(--chart-2))",
 	},
 	label: {
@@ -51,12 +65,29 @@ const chartConfig = {
 	},
 };
 
-export function BarInfo() {
+export function BarInfo({ orders }) {
+	const chartData = processMenuData(orders);
+
+	// Menghitung persentase perubahan total penjualan
+	const calculateGrowth = () => {
+		const totalCurrent = chartData.reduce((sum, item) => sum + item.jumlah, 0);
+		const previousTotal = orders.length; // Simplified previous total
+		const growth = ((totalCurrent - previousTotal) / previousTotal) * 100;
+		return growth.toFixed(1);
+	};
+
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Bar Chart - Custom Label</CardTitle>
-				<CardDescription>January - June 2024</CardDescription>
+				<CardTitle>Menu Terlaris</CardTitle>
+				<CardDescription>
+					{new Date().toLocaleDateString("id-ID", {
+						weekday: "long",
+						year: "numeric",
+						month: "long",
+						day: "numeric",
+					})}
+				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<ChartContainer config={chartConfig}>
@@ -70,38 +101,40 @@ export function BarInfo() {
 					>
 						<CartesianGrid horizontal={false} />
 						<YAxis
-							dataKey="month"
+							dataKey="menu"
 							type="category"
 							tickLine={false}
 							tickMargin={10}
 							axisLine={false}
-							tickFormatter={(value) => value.slice(0, 3)}
+							tickFormatter={(value) => value.split(" ").slice(0, 2).join(" ")} // Memendekkan nama menu
 							hide
 						/>
-						<XAxis dataKey="desktop" type="number" hide />
+						<XAxis dataKey="jumlah" type="number" hide />
 						<ChartTooltip
 							cursor={false}
 							content={<ChartTooltipContent indicator="line" />}
 						/>
 						<Bar
-							dataKey="desktop"
+							dataKey="jumlah"
 							layout="vertical"
-							fill="var(--color-desktop)"
+							fill="hsl(var(--chart-1))"
 							radius={4}
 						>
 							<LabelList
-								dataKey="month"
+								dataKey="menu"
 								position="insideLeft"
 								offset={8}
-								className="fill-[--color-label]"
+								className="fill-[hsl(var(--background))]"
 								fontSize={12}
+								formatter={(value) => value.split(" ").slice(0, 2).join(" ")} // Memendekkan nama menu
 							/>
 							<LabelList
-								dataKey="desktop"
+								dataKey="jumlah"
 								position="right"
 								offset={8}
 								className="fill-foreground"
 								fontSize={12}
+								formatter={(value) => `${value} porsi`}
 							/>
 						</Bar>
 					</BarChart>
@@ -109,10 +142,12 @@ export function BarInfo() {
 			</CardContent>
 			<CardFooter className="flex-col items-start gap-2 text-sm">
 				<div className="flex gap-2 font-medium leading-none">
-					Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+					{chartData[0]?.menu.split(" ").slice(0, 2).join(" ")} adalah menu
+					terlaris dengan {chartData[0]?.jumlah} porsi
+					<TrendingUp className="h-4 w-4" />
 				</div>
 				<div className="leading-none text-muted-foreground">
-					Showing total visitors for the last 6 months
+					Menampilkan 6 menu dengan penjualan tertinggi
 				</div>
 			</CardFooter>
 		</Card>

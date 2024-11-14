@@ -40,7 +40,7 @@ const PageOperasional = () => {
 
 				<div className="flex flex-col justify-center items-center mx-4 my-10 gap-4">
 					<p className="text-sm font-semibold">How to use BDR Order</p>
-					<div className="flex flex-row items-center justify-center gap-4">
+					<div className="flex flex-row items-center justify-center gap-2 md:gap-4">
 						<div className="flex flex-col items-center gap-2 p-4 border bg-white rounded-lg w-[100px]">
 							<TiShoppingCart />
 							<p>Order</p>
@@ -62,7 +62,7 @@ const PageOperasional = () => {
 					<p className="text-sm font-semibold">
 						How would you line to eat today ?
 					</p>
-					<Link href="order" className="w-full">
+					<Link href="/order/ordermenu" className="w-full">
 						<Button
 							className="w-full py-6 text-sm font-semibold"
 							variant="outline"
@@ -72,23 +72,13 @@ const PageOperasional = () => {
 						</Button>
 					</Link>
 
-					<Link href="order" className="w-full">
+					<Link href="/order/ordermenu" className="w-full">
 						<Button
 							className="w-full py-6 text-sm font-semibold"
 							variant="outline"
 							onClick={() => updateTypeOrder("Pick Up")}
 						>
 							Pick Up
-						</Button>
-					</Link>
-
-					<Link href="order" className="w-full">
-						<Button
-							className="w-full py-6 text-sm font-semibold"
-							variant="outline"
-							onClick={() => updateTypeOrder("Delivery")}
-						>
-							Delivery
 						</Button>
 					</Link>
 				</div>

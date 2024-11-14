@@ -21,9 +21,9 @@ const MenuOrder = ({ data, addToCart, removeFromCart, cart }) => {
 
 	return (
 		<>
-			<div className="sm:w-[225px] h-full bg-white rounded-lg border">
+			<div className="sm:w-[225px] md:w-full h-full bg-white rounded-lg border">
 				<Link
-					href={`#`}
+					href={`/order/ordermenu/detailsmenu/${data.id}`}
 					className="flex flex-col justify-center items-center p-3 sm:p-4"
 				>
 					<Image
@@ -38,32 +38,30 @@ const MenuOrder = ({ data, addToCart, removeFromCart, cart }) => {
 					</h3>
 					<p className="text-sm text-gray-500 truncate">{data.kategori}</p>
 				</Link>
-				<div className="flex justify-between items-center mx-2 sm:mx-3 mb-2 sm:mb-3 px-2 py-1.5 bg-gray-50  rounded-lg">
-					<p className="font-semibold sm:text-base text-sm">
+				<div className="flex justify-between gap-1 items-center mx-2 md:mx-3 mb-2 sm:mb-3 px-2 py-1.5 bg-gray-50  rounded-lg">
+					<p className="font-semibold text-sm md:text-sm">
 						{formatRupiah(data.harga)}
 					</p>
 					<div className="flex items-center gap-1">
 						{cartItem && cartItem.quantity > 0 && (
 							<>
-								<Button
-									variant="secondary"
-									className="rounded-lg border h-8 w-8 bg-white hover:bg-headingText hover:text-white"
+								<button
+									className="flex items-center justify-center p-1 md:p-2 rounded-md border bg-white hover:bg-headingText hover:text-white"
 									onClick={() => handleRemoveFromCart(data)}
 								>
 									<FaMinus />
-								</Button>
-								<p className="text-sm font-semibold px-1">
+								</button>
+								<p className="text-sm font-semibold px-0.5 md:px-1">
 									{cartItem.quantity}
 								</p>
 							</>
 						)}
-						<Button
-							variant="secondary"
-							className="rounded-lg border h-8 w-8 bg-white hover:bg-headingText hover:text-white"
+						<button
+							className="flex items-center justify-center p-1 md:p-2 rounded-md border bg-white hover:bg-headingText hover:text-white"
 							onClick={() => handleAddToCart(data)}
 						>
 							<FaPlus />
-						</Button>
+						</button>
 					</div>
 				</div>
 			</div>

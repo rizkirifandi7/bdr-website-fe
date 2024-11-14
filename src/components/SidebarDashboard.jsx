@@ -23,9 +23,9 @@ import {
 	MdOutlineTableRestaurant,
 	MdOutlineNoteAlt,
 	MdOutlineFeedback,
-	MdOutlineBorderAll,
 } from "react-icons/md";
-import { LuMenuSquare, LuUser2 } from "react-icons/lu";
+import { LuUser2 } from "react-icons/lu";
+import { BiFoodMenu } from "react-icons/bi";
 
 import LogoBDR from "../assets/logobdr.png";
 import Link from "next/link";
@@ -44,6 +44,9 @@ import { useRouter } from "next/navigation";
 import { Logout } from "@/services/api/auth";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
+import { MdRestaurantMenu, MdEventNote } from "react-icons/md";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const data = {
 	navMain: [
@@ -59,12 +62,12 @@ const data = {
 				{
 					title: "Menu",
 					url: "/dashboard/menu",
-					icon: <LuMenuSquare />,
+					icon: <BiFoodMenu />,
 				},
 				{
 					title: "Kategori Menu",
 					url: "/dashboard/kategori-menu",
-					icon: <LuMenuSquare />,
+					icon: <MdRestaurantMenu />,
 				},
 
 				{
@@ -81,29 +84,18 @@ const data = {
 				{
 					title: "Pesanan",
 					url: "/dashboard/pesanan",
-					icon: <MdOutlineBorderAll />,
+					icon: <MdOutlineNoteAlt />,
 				},
 				{
 					title: "Reservasi",
 					url: "/dashboard/reservasi",
-					icon: <MdOutlineNoteAlt />,
+					icon: <MdEventNote />,
 				},
-				{
-					title: "Feedback",
-					url: "/dashboard/feedback",
-					icon: <MdOutlineFeedback />,
-				},
-			],
-		},
-		{
-			title: "User",
-			url: "#",
-			items: [
-				{
-					title: "User",
-					url: "/dashboard/user",
-					icon: <LuUser2 />,
-				},
+				// {
+				// 	title: "Feedback",
+				// 	url: "/dashboard/feedback",
+				// 	icon: <MdOutlineFeedback />,
+				// },
 			],
 		},
 	],
@@ -111,6 +103,7 @@ const data = {
 
 const SidebarDashboard = ({ children }) => {
 	const router = useRouter();
+	const [user, setUser] = React.useState(null);
 
 	const handleLogout = async () => {
 		try {
@@ -127,6 +120,13 @@ const SidebarDashboard = ({ children }) => {
 		}
 	};
 
+	React.useEffect(() => {
+		const token = Cookies.get("auth_session");
+		if (token) {
+			setUser(jwtDecode(token));
+		}
+	}, []);
+
 	return (
 		<>
 			<Sidebar>
@@ -135,11 +135,7 @@ const SidebarDashboard = ({ children }) => {
 						<SidebarMenuItem>
 							<SidebarMenuButton size="lg">
 								<div className="">
-									<Image
-										src={LogoBDR}
-										className="w-10 h-10"
-										alt="logo"
-									/>
+									<Image src={LogoBDR} className="w-10 h-10" alt="logo" />
 								</div>
 								<div className="flex flex-col gap-0.5 leading-none">
 									<span className="font-bold text-sm">Bakso Dono Reborn</span>
@@ -169,6 +165,25 @@ const SidebarDashboard = ({ children }) => {
 							</SidebarGroupContent>
 						</SidebarGroup>
 					))}
+					{user && user.role === "admin" && (
+						<SidebarGroup key="User">
+							<SidebarGroupLabel>User</SidebarGroupLabel>
+							<SidebarGroupContent>
+								<SidebarMenu className="flex flex-col gap-4">
+									<SidebarMenuItem key="User">
+										<SidebarMenuButton asChild>
+											<Link href="/dashboard/user">
+												<p className="text-2xl">
+													<LuUser2 />
+												</p>
+												<p className="text-base font-medium">User</p>
+											</Link>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								</SidebarMenu>
+							</SidebarGroupContent>
+						</SidebarGroup>
+					)}
 				</SidebarContent>
 				<SidebarRail />
 			</Sidebar>
@@ -180,15 +195,19 @@ const SidebarDashboard = ({ children }) => {
 					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger>
-							<p className="inline-flex items-center gap-2 px-3 py-1 border rounded-md text-base font-medium">
+							<p className="inline-flex items-center gap-2 px-3 py-1 border rounded-md text-base font-medium capitalize">
 								<FaRegUser />
-								Admin
+								{user ? user.nama : "User"}
 							</p>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent className="w-auto me-5">
 							<DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-							<Button variant="outline" href="/auth/signin" onClick={() => handleLogout()}>
+							<Button
+								variant="outline"
+								href="/auth/signin"
+								onClick={() => handleLogout()}
+							>
 								<DropdownMenuItem>
 									<LogOut />
 									<span>Keluar</span>

@@ -43,8 +43,8 @@ const PageOperasional = () => {
 					/>
 
 					<Link
-						href="order"
-						className="absolute top-5 left-5 p-2 bg-white rounded-lg hover:bg-gray-100"
+						href="/order/ordermenu"
+						className="fixed top-5 left-5 p-2 bg-white rounded-lg hover:bg-gray-100"
 					>
 						<FaArrowLeft className="text-xl" />
 					</Link>

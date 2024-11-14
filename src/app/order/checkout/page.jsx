@@ -86,7 +86,7 @@ const PageCheckout = () => {
 		<OrderSection>
 			<div className="min-h-screen  relative overflow-y-auto scrollbar-hide pb-24 pt-16">
 				<div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 max-w-[492px] w-full flex justify-between items-center bg-white h-[60px] p-4 border-b">
-					<Link href="/order">
+					<Link href="/order/ordermenu">
 						<FaArrowLeft />
 					</Link>
 					<h1 className="text-xl font-bold">Checkout</h1>
@@ -102,13 +102,22 @@ const PageCheckout = () => {
 
 				<div className="m-4 bg-white p-4 border rounded-lg">
 					<div className="flex justify-between items-center">
-						<div className="text-start">
-							<p className="text-gray-500">Table Number</p>
-							<p className="inline-flex items-center gap-1 text-base font-semibold">
-								<MdOutlineTableBar />
-								{tableNumber}
-							</p>
-						</div>
+						{typeOrder === "Dine In" ? (
+							<div className="text-start">
+								<p className="text-gray-500">Table Number</p>
+								<p className="inline-flex items-center gap-1 text-base font-semibold">
+									<MdOutlineTableBar />
+									{tableNumber}
+								</p>
+							</div>
+						) : (
+							<div className="text-start">
+								<p className="text-gray-500">Customer</p>
+								<p className="inline-flex items-center gap-1 text-base font-semibold">
+									{tableNumber}
+								</p>
+							</div>
+						)}
 						<div className="text-end">
 							<p className="text-gray-500">Date</p>
 							<p className="text-base font-medium">

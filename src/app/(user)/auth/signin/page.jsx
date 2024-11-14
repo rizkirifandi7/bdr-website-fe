@@ -28,6 +28,7 @@ import { setCookie } from "@/actions/cookies";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 const FormSchema = z.object({
 	email: z
@@ -69,13 +70,12 @@ const PageLogin = () => {
 			);
 
 			if (response.data.status === true) {
-				setCookie("auth_session", response.data.data.token);
+				Cookies.set("auth_session", response.data.data.token);
+				toast.success("Login berhasil.");
 				router.push("/dashboard/home");
-			} else {
-				toast.error("Anda tidak memiliki akses.");
 			}
 		} catch (error) {
-			console.error("Error login:", error);
+			toast.error("Email atau password salah.");
 		}
 	};
 

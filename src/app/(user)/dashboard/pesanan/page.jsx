@@ -50,6 +50,13 @@ import axios from "axios";
 import { toast } from "sonner";
 import Image from "next/image";
 import { formatRupiah } from "@/lib/formatRupiah";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 const PagePesanan = () => {
 	const [sorting, setSorting] = React.useState([]);
@@ -76,12 +83,39 @@ const PagePesanan = () => {
 		}
 	};
 
+	const updateStatus = async (id, status) => {
+		try {
+			await axios.put(`http://localhost:8000/api/pesanan/${id}`, { status });
+			toast("Status updated successfully");
+		} catch (error) {
+			console.error("Error updating status:", error);
+			toast("Failed to update status");
+		}
+	};
+
+	const StatusCell = ({ row }) => {
+		const [status, setStatus] = React.useState(row.getValue("status"));
+
+		const handleChange = async (value) => {
+			setStatus(value);
+			await updateStatus(row.original.id, value);
+		};
+
+		return (
+			<Select value={status} onValueChange={handleChange}>
+				<SelectTrigger className="w-[180px]">
+					<SelectValue placeholder="Status" />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectItem value="completed">Completed</SelectItem>
+					<SelectItem value="pending">Pending</SelectItem>
+					<SelectItem value="canceled">Canceled</SelectItem>
+				</SelectContent>
+			</Select>
+		);
+	};
+
 	const columns = [
-		{
-			accessorKey: "id",
-			header: "ID",
-			cell: ({ row }) => <div>{row.getValue("id")}</div>,
-		},
 		{
 			accessorKey: "id_meja",
 			header: "Nomor Meja",
@@ -113,11 +147,21 @@ const PagePesanan = () => {
 		{
 			accessorKey: "status",
 			header: "Status",
-			cell: ({ row }) => <div>{row.getValue("status")}</div>,
+			cell: ({ row }) => <StatusCell row={row} />,
 		},
 		{
 			accessorKey: "order_time",
-			header: "Tanggal",
+			header: ({ column }) => {
+				return (
+					<Button
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Tanggal
+						<CaretSortIcon className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
 			cell: ({ row }) => (
 				<div className="capitalize">
 					{new Date(row.getValue("order_time")).toLocaleDateString("id-ID", {
@@ -129,6 +173,7 @@ const PagePesanan = () => {
 				</div>
 			),
 		},
+		
 		{
 			id: "actions",
 			enableHiding: false,
@@ -255,9 +300,7 @@ const PagePesanan = () => {
 															{formatRupiah(
 																selectedRowData.item_pesanan.reduce(
 																	(acc, item) => {
-																		return (
-																			acc + item.jumlah * item.menu.harga * 0.05
-																		);
+																		return acc + item.jumlah * 0;
 																	},
 																	0
 																)

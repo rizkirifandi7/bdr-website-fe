@@ -1,6 +1,6 @@
 "use client";
 
-import { setCookie } from "@/actions/cookies";
+import Cookies from "js-cookie";
 import React, { createContext, useEffect, useState, useContext } from "react";
 
 const CartContext = createContext();
@@ -26,7 +26,7 @@ export const CartProvider = ({ children }) => {
 		localStorage.setItem("cart", JSON.stringify(cart));
 		localStorage.setItem("tableNumber", tableNumber);
 		localStorage.setItem("typeOrder", typeOrder);
-		setCookie("typeOrder", typeOrder);
+		Cookies.set("typeOrder", typeOrder);
 	}, [cart, tableNumber, typeOrder]);
 
 	const addToCart = (item) => {

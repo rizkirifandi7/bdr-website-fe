@@ -5,9 +5,9 @@ import { HiOutlineShoppingBag } from "react-icons/hi";
 
 const ButtonCheckout = ({ totalQuantity, link, getTotalPrice }) => {
 	return (
-		<div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50 max-w-[492px] w-full flex justify-center text-center">
+		<div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50 max-w-[380px] md:max-w-[492px] w-full flex justify-center text-center">
 			<Link href={link} className="w-full my-6 mx-4 rounded-lg">
-				<button className="flex justify-between items-center bg-orange-500 h-16 rounded-lg text-white text-base font-semibold w-[395px] sm:w-[465px] hover:bg-orange-400  shadow-xl">
+				<button className="flex justify-between items-center bg-orange-500 h-16 rounded-lg text-white text-base font-semibold w-[380px] sm:w-[465px] hover:bg-orange-400  shadow-xl">
 					<div className="flex items-center justify-center bg-white h-full w-20 rounded-l-lg relative">
 						<span className="absolute top-2 right-1 bg-headingText text-white rounded-full w-5 h-5 flex justify-center items-center text-xs font-semibold">
 							{totalQuantity}

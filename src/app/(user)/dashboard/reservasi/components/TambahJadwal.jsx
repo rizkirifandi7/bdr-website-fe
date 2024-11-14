@@ -1,3 +1,4 @@
+"use client";
 /* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -34,10 +35,10 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const FormSchema = z.object({
-	title: z.string().nonempty("Judul harus diisi."),
-	deskripsi: z.string().nonempty("Deskripsi harus diisi."),
-	schedule_start: z.any(),
-	schedule_end: z.any(),
+	nama_pelanggan: z.string().nonempty("Nama pelanggan harus diisi."),
+	kontak: z.string().nonempty("Kontak harus diisi."),
+	tanggal_reservasi: z.any(),
+	jumlah_orang: z.any(),
 });
 
 const TambahJadwal = ({ fetchJadwalData }) => {
@@ -46,43 +47,41 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 	const form = useForm({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
-			title: "",
-			deskripsi: "",
-			schedule_start: "",
-			schedule_end: "",
+			nama_pelanggan: "",
+			kontak: "",
+			tanggal_reservasi: null,
+			jumlah_orang: 1,
 		},
 	});
 
 	const handleTambah = async (data) => {
 		try {
-			console.log(data);
-			// const formData = new FormData();
-			// formData.append("title", data.title);
-			// formData.append("deskripsi", data.deskripsi);
-			// formData.append("schedule_start", data.schedule_start);
-			// formData.append("schedule_end", data.schedule_end);
+			const formData = {
+				nama_pelanggan: data.nama_pelanggan,
+				kontak: data.kontak,
+				tanggal_reservasi: data.tanggal_reservasi.toISOString(),
+				jumlah_orang: data.jumlah_orang,
+			};
 
-			// const response = await axios.post(
-			// 	"http://localhost:8000/jadwal",
-			// 	formData,
-			// 	{
-			// 		headers: {
-			// 			"Content-Type": "application/json",
-			// 		},
-			// 	}
-			// );
+			const response = await axios.post(
+				"http://localhost:8000/api/reservasi",
+				formData,
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
-			// console.log("Response:", response); // Debugging log
-
-			// if (response.status === 200) {
-			// 	toast.success("Jadwal berhasil ditambahkan");
-			// 	form.reset();
-			// 	setOpenTambah(false);
-			// 	fetchJadwalData();
-			// }
+			if (response.data.status === true) {
+				toast.success("Reservasi berhasil ditambahkan");
+				form.reset();
+				setOpenTambah(false);
+				fetchJadwalData();
+			}
 		} catch (error) {
-			console.error("Error adding jadwal:", error);
-			toast.error("Gagal menambahkan jadwal");
+			console.error("Error adding reservasi:", error);
+			toast.error("Gagal menambahkan reservasi");
 		}
 	};
 
@@ -94,7 +93,7 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 					Tambah Reservasi
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-fit">
+			<DialogContent className="max-w-[350px]">
 				<DialogHeader className="text-start">
 					<DialogTitle>Tambah Reservasi</DialogTitle>
 					<DialogDescription>Tambah reservasi baru.</DialogDescription>
@@ -106,14 +105,14 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 					>
 						<FormField
 							control={form.control}
-							name="title"
+							name="nama_pelanggan"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Judul</FormLabel>
+									<FormLabel>Nama Pelanggan</FormLabel>
 									<FormControl>
 										<Input
-											className="shadow-none w-[320px] md:w-full"
-											placeholder="masukkan title..."
+											className="shadow-none w-full"
+											placeholder="masukkan nama pelanggan..."
 											{...field}
 											type="text"
 										/>
@@ -124,14 +123,14 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 						/>
 						<FormField
 							control={form.control}
-							name="deskripsi"
+							name="kontak"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Deskripsi</FormLabel>
+									<FormLabel>Kontak</FormLabel>
 									<FormControl>
 										<Input
-											className="shadow-none w-[320px] md:w-full"
-											placeholder="masukkan deskripsi..."
+											className="shadow-none w-full"
+											placeholder="masukkan kontak..."
 											{...field}
 											type="text"
 										/>
@@ -140,87 +139,63 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 								</FormItem>
 							)}
 						/>
-						<div className="flex flex-col md:flex-row md:items-center  gap-6 md:gap-2 pt-2">
-							<FormField
-								control={form.control}
-								name="schedule_start"
-								render={({ field }) => (
-									<FormItem className="flex flex-col">
-										<FormLabel>Tanggal Mulai</FormLabel>
-										<Popover>
-											<PopoverTrigger asChild>
-												<FormControl>
-													<Button
-														variant={"outline"}
-														className={cn(
-															"w-full md:w-[250px] pl-3 text-left font-normal",
-															!field.value && "text-muted-foreground"
-														)}
-													>
-														{field.value ? (
-															formatDateToISO(field.value, "PPP")
-														) : (
-															<span>Pilih tanggal</span>
-														)}
-														<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-													</Button>
-												</FormControl>
-											</PopoverTrigger>
-											<PopoverContent className="w-auto p-0" align="start">
-												<Calendar
-													mode="single"
-													selected={field.value}
-													onSelect={field.onChange}
-													disabled={(date) => date < new Date("1900-01-01")}
-													initialFocus
-												/>
-											</PopoverContent>
-										</Popover>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<span className="hidden md:block mt-5">-</span>
-							<FormField
-								control={form.control}
-								name="schedule_end"
-								render={({ field }) => (
-									<FormItem className="flex flex-col">
-										<FormLabel>Tanggal Akhir</FormLabel>
-										<Popover>
-											<PopoverTrigger asChild>
-												<FormControl>
-													<Button
-														variant={"outline"}
-														className={cn(
-															"w-full md:w-[250px] pl-3 text-left font-normal",
-															!field.value && "text-muted-foreground"
-														)}
-													>
-														{field.value ? (
-															formatDateToISO(field.value, "PPP")
-														) : (
-															<span>Pilih tanggal</span>
-														)}
-														<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-													</Button>
-												</FormControl>
-											</PopoverTrigger>
-											<PopoverContent className="w-auto p-0" align="start">
-												<Calendar
-													mode="single"
-													selected={field.value}
-													onSelect={field.onChange}
-													disabled={(date) => date < new Date("1900-01-01")}
-													initialFocus
-												/>
-											</PopoverContent>
-										</Popover>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
+						<FormField
+							control={form.control}
+							name="tanggal_reservasi"
+							render={({ field }) => (
+								<FormItem className="flex flex-col">
+									<FormLabel>Tanggal Reservasi</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant={"outline"}
+													className={cn(
+														"w-full pl-3 text-left font-normal",
+														!field.value && "text-muted-foreground"
+													)}
+												>
+													{field.value ? (
+														formatDateToISO(field.value, "PPP")
+													) : (
+														<span>Pilih tanggal</span>
+													)}
+													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+										<PopoverContent className="w-auto p-0" align="start">
+											<Calendar
+												mode="single"
+												selected={field.value}
+												onSelect={field.onChange}
+												disabled={(date) => date < new Date("1900-01-01")}
+												initialFocus
+											/>
+										</PopoverContent>
+									</Popover>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="jumlah_orang"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Jumlah Orang</FormLabel>
+									<FormControl>
+										<Input
+											className="shadow-none w-[320px] md:w-full"
+											placeholder="masukkan jumlah orang..."
+											{...field}
+											type="number"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<DialogFooter>
 							<Button type="submit" className="w-full md:w-full mt-2">
 								Submit

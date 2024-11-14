@@ -10,16 +10,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import isBetween from "dayjs/plugin/isBetween";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import {
 	Popover,
 	PopoverTrigger,
 	PopoverContent,
 } from "@/components/ui/popover";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
 import TambahJadwal from "./components/TambahJadwal";
-import Link from "next/link";
 
 dayjs.extend(isBetween);
 
@@ -30,34 +32,31 @@ const PageReservasi = () => {
 	const [jadwalData, setJadwalData] = useState([]);
 	const [selectedTitles, setSelectedTitles] = useState([]);
 
-	const token = Cookies.get("token");
-	const user = token ? jwtDecode(token) : "admin";
+	const fetchJadwalData = async () => {
+		try {
+			const response = await axios.get("http://localhost:8000/api/reservasi");
+			const data = await response.data.data;
+			setJadwalData(data);
+			setSelectedTitles(
+				Array.from(new Set(data.map((schedule) => schedule.nama_pelanggan)))
+			);
+		} catch (error) {
+			console.error("Error fetching jadwal data:", error);
+		}
+	};
 
-	// const fetchJadwalData = async () => {
-	// 	try {
-	// 		const response = await axios.get("http://localhost:8000/jadwal");
-	// 		const data = await response.data.data.jadwalData;
-	// 		setJadwalData(data);
-	// 		setSelectedTitles(
-	// 			Array.from(new Set(data.map((schedule) => schedule.title)))
-	// 		);
-	// 	} catch (error) {
-	// 		console.error("Error fetching jadwal data:", error);
-	// 	}
-	// };
+	const hapusJadwal = async (id) => {
+		try {
+			await axios.delete(`http://localhost:8000/api/reservasi/${id}`);
+			fetchJadwalData();
+		} catch (error) {
+			console.error("Error deleting jadwal:", error);
+		}
+	};
 
-	// const hapusJadwal = async (id) => {
-	// 	try {
-	// 		await axios.delete(`http://localhost:8000/jadwal/${id}`);
-	// 		fetchJadwalData();
-	// 	} catch (error) {
-	// 		console.error("Error deleting jadwal:", error);
-	// 	}
-	// };
-
-	// useEffect(() => {
-	// 	fetchJadwalData();
-	// }, []);
+	useEffect(() => {
+		fetchJadwalData();
+	}, []);
 
 	useEffect(() => {
 		const daysInMonth = dayjs(currentDate).daysInMonth();
@@ -120,7 +119,7 @@ const PageReservasi = () => {
 					<h1 className="text-2xl font-bold">Dashboard Reservasi</h1>
 					<div className="flex flex-col gap-4 border p-2 rounded-md mt-1">
 						<div className="flex flex-col gap-4 justify-center items-center">
-							<TambahJadwal />
+							<TambahJadwal fetchJadwalData={fetchJadwalData} />
 							<Calendar
 								mode="range"
 								selected={date}
@@ -131,7 +130,7 @@ const PageReservasi = () => {
 						<div className="flex flex-col gap-2 mt-4">
 							<h2 className="text-lg font-semibold">Filter Reservasi</h2>
 							{Array.from(
-								new Set(jadwalData.map((schedule) => schedule.title))
+								new Set(jadwalData.map((schedule) => schedule.nama_pelanggan))
 							).map((title) => (
 								<div
 									key={title}
@@ -142,24 +141,25 @@ const PageReservasi = () => {
 											type="checkbox"
 											checked={selectedTitles.includes(title)}
 											onChange={() => toggleTitleSelection(title)}
+											className="h-4 w-4"
 										/>
-										<span className="ml-2 text-base">{title}</span>
+										<span className="ml-2 text-base w-full truncate">
+											{title}
+										</span>
 									</Label>
-									{user.role === "admin" ? (
-										<Button
-											onClick={() => {
-												const scheduleToDelete = jadwalData.find(
-													(schedule) => schedule.title === title
-												);
-												if (scheduleToDelete) {
-													hapusJadwal(scheduleToDelete.id);
-												}
-											}}
-											className="p-0.5 text-black bg-transparent  shadow-none h-fit hover:bg-transparent"
-										>
-											<Trash />
-										</Button>
-									) : null}
+									<Button
+										onClick={() => {
+											const scheduleToDelete = jadwalData.find(
+												(schedule) => schedule.nama_pelanggan === title
+											);
+											if (scheduleToDelete) {
+												hapusJadwal(scheduleToDelete.id);
+											}
+										}}
+										className="p-0.5 text-black bg-transparent  shadow-none h-fit hover:bg-transparent"
+									>
+										<Trash />
+									</Button>
 								</div>
 							))}
 						</div>
@@ -206,14 +206,12 @@ const PageReservasi = () => {
 						))}
 						{dates.map(({ day, month, year, type }, index) => {
 							const schedulesInRange = jadwalData.filter((schedule) => {
-								const start = dayjs(schedule.schedule_start);
-								const end = dayjs(schedule.schedule_end);
 								const currentDate = dayjs(`${year}-${month + 1}-${day}`);
 								return (
-									(currentDate.isBetween(start, end, null, "[]") ||
-										start.isSame(currentDate, "day") ||
-										end.isSame(currentDate, "day")) &&
-									selectedTitles.includes(schedule.title)
+									currentDate.isSame(
+										dayjs(schedule.tanggal_reservasi),
+										"day"
+									) && selectedTitles.includes(schedule.nama_pelanggan)
 								);
 							});
 
@@ -238,43 +236,45 @@ const PageReservasi = () => {
 									{schedulesInRange.slice(0, 3).map((schedule, idx) => (
 										<Dialog key={idx}>
 											<DialogTrigger asChild>
-												<Link className="flex flex-col text-xs text-start bg-yellow-200 mt-1 p-0.5 rounded-md">
-													{schedule.title}
-												</Link>
+												<button className="flex flex-col text-xs text-start bg-yellow-200 mt-1 p-0.5 rounded-md">
+													{schedule.nama_pelanggan}
+												</button>
 											</DialogTrigger>
 											<DialogContent>
+												<DialogTitle>Detail Reservasi</DialogTitle>
 												<div className="flex flex-col gap-8">
-													<h2 className="font-semibold text-2xl">
-														Detail Kegiatan
-													</h2>
 													<div className="flex flex-col gap-1">
 														<Label className="text-slate-600 text-base mb-1">
-															Judul
+															Nama Pelanggan
 														</Label>
 														<p className="text-lg font-medium border  p-2 rounded-md">
-															{schedule.title}
+															{schedule.nama_pelanggan}
 														</p>
 													</div>
 													<div className="flex flex-col gap-1 w-[460px]">
 														<Label className="text-slate-600 text-base mb-1">
-															Deskripsi
+															Kontak
 														</Label>
 														<p className="text-lg font-medium border p-2 rounded-md break-words">
-															{schedule.deskripsi}
+															{schedule.kontak}
 														</p>
 													</div>
 													<div className="flex flex-col gap-1">
 														<Label className="text-slate-600 text-base mb-1">
-															Tanggal
+															Tanggal Reservasi
 														</Label>
 														<p className="text-lg font-medium border  p-2 rounded-md">
-															{dayjs(schedule.schedule_start).format(
-																"DD MMMM YYYY"
-															)}{" "}
-															-{" "}
-															{dayjs(schedule.schedule_end).format(
+															{dayjs(schedule.tanggal_reservasi).format(
 																"DD MMMM YYYY"
 															)}
+														</p>
+													</div>
+													<div className="flex flex-col gap-1">
+														<Label className="text-slate-600 text-base mb-1">
+															Jumlah Orang
+														</Label>
+														<p className="text-lg font-medium border  p-2 rounded-md">
+															{schedule.jumlah_orang}
 														</p>
 													</div>
 												</div>
@@ -284,51 +284,47 @@ const PageReservasi = () => {
 									{schedulesInRange.length > 3 && (
 										<Popover>
 											<PopoverTrigger asChild>
-												<Link className="flex flex-col text-xs text-center rounded-full p-0.5 mt-2">
+												<button className="flex flex-col text-xs text-center rounded-full p-0.5 mt-2">
 													{`Lihat semua ${schedulesInRange.length}`}
-												</Link>
+												</button>
 											</PopoverTrigger>
 											<PopoverContent>
 												<div className="flex flex-col gap-2">
 													{schedulesInRange.map((schedule, idx) => (
 														<Dialog key={idx}>
 															<DialogTrigger asChild>
-																<Link className="flex flex-col text-xs text-start bg-yellow-200 mt-1 p-0.5 rounded-md">
-																	{schedule.title}
-																</Link>
+																<button className="flex flex-col text-xs text-start bg-yellow-200 mt-1 p-0.5 rounded-md">
+																	{schedule.nama_pelanggan}
+																</button>
 															</DialogTrigger>
 															<DialogContent>
+																<DialogTitle>Detail Reservasi</DialogTitle>
 																<div className="flex flex-col gap-2">
-																	<p className="font-semibold">
-																		Detail Kegiatan
+																	<p>
+																		<span className="font-semibold">
+																			Nama Pelanggan:
+																		</span>{" "}
+																		{schedule.nama_pelanggan}
 																	</p>
 																	<p>
 																		<span className="font-semibold">
-																			Judul:
+																			Kontak:
 																		</span>{" "}
-																		{schedule.title}
+																		{schedule.kontak}
 																	</p>
 																	<p>
 																		<span className="font-semibold">
-																			Deskripsi:
+																			Tanggal Reservasi:
 																		</span>{" "}
-																		{schedule.deskripsi}
-																	</p>
-																	<p>
-																		<span className="font-semibold">
-																			Tanggal Mulai:
-																		</span>{" "}
-																		{dayjs(schedule.schedule_start).format(
+																		{dayjs(schedule.tanggal_reservasi).format(
 																			"DD MMMM YYYY"
 																		)}
 																	</p>
 																	<p>
 																		<span className="font-semibold">
-																			Tanggal Akhir:
+																			Jumlah Orang:
 																		</span>{" "}
-																		{dayjs(schedule.schedule_end).format(
-																			"DD MMMM YYYY"
-																		)}
+																		{schedule.jumlah_orang}
 																	</p>
 																</div>
 															</DialogContent>
