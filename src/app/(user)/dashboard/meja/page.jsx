@@ -47,6 +47,8 @@ import {
 import { FiTrash2 } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "sonner";
+import TambahMeja from "./components/TambahMeja";
+import UpdateMeja from "./components/UpdateMeja";
 
 const PageUser = () => {
 	const [sorting, setSorting] = React.useState([]);
@@ -59,12 +61,13 @@ const PageUser = () => {
 
 	const handleDelete = async () => {
 		const response = await axios.delete(
-			`http://localhost:8000/api/user/${selectedId}`
+			`http://localhost:8000/api/meja/${selectedId}`
 		);
 
 		if (response.status === 200) {
 			toast.success("Data berhasil dihapus.");
-			fetchDataUser();
+			fetchMeja();
+			setOpenHapus(false);
 		} else {
 			toast.error("Terjadi kesalahan.");
 		}
@@ -89,6 +92,7 @@ const PageUser = () => {
 				const rowData = row.original;
 				return (
 					<div className="flex items-center gap-2">
+						<UpdateMeja fetchMeja={fetchMeja} rowData={rowData} id={id} />
 						<Dialog open={openHapus} onOpenChange={setOpenHapus}>
 							<DialogTrigger asChild>
 								<Button
@@ -150,13 +154,13 @@ const PageUser = () => {
 		},
 	});
 
-	const fetchDataUser = async () => {
+	const fetchMeja = async () => {
 		const response = await axios.get("http://localhost:8000/api/meja");
 		setDataUser(response.data.data);
 	};
 
 	React.useEffect(() => {
-		fetchDataUser();
+		fetchMeja();
 	}, []);
 
 	return (
@@ -171,6 +175,7 @@ const PageUser = () => {
 					}
 					className="max-w-sm"
 				/>
+				<TambahMeja fetchMeja={fetchMeja} />
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">

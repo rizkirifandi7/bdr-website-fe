@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FiMenu } from "react-icons/fi";
@@ -53,23 +53,6 @@ const MenuFilter = ({ filterMenu, setFilterMenu }) => {
 		setIsDrawerOpen(!isDrawerOpen);
 	};
 
-	const kategoriRefs = useRef([]);
-
-	useEffect(() => {
-		const selectedKategoriIndex = kategori.findIndex(
-			(item) => item.nama_kategori === filterMenu
-		);
-		if (
-			selectedKategoriIndex !== -1 &&
-			kategoriRefs.current[selectedKategoriIndex]
-		) {
-			kategoriRefs.current[selectedKategoriIndex].scrollIntoView({
-				behavior: "smooth",
-				inline: "center",
-			});
-		}
-	}, [filterMenu, kategori]);
-
 	return (
 		<div
 			id="menu-filter"
@@ -122,7 +105,7 @@ const MenuFilter = ({ filterMenu, setFilterMenu }) => {
 					<Separator orientation="vertical" />
 				</div>
 				<div className="ml-2 flex gap-0.5 overflow-x-auto touch-auto scrollbar-hide">
-					{kategori.map((item, index) => (
+					{kategori.map((item) => (
 						<Button
 							key={item.id}
 							variant="ghost"
@@ -132,7 +115,6 @@ const MenuFilter = ({ filterMenu, setFilterMenu }) => {
 									: ""
 							}`}
 							onClick={() => handleFilterChange(item.nama_kategori)}
-							ref={(el) => (kategoriRefs.current[index] = el)}
 						>
 							{item.nama_kategori}
 						</Button>

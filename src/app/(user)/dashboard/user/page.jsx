@@ -67,6 +67,7 @@ const PageUser = () => {
 		if (response.status === 200) {
 			toast.success("Data berhasil dihapus.");
 			fetchDataUser();
+			setOpenHapus(false);
 		} else {
 			toast.error("Terjadi kesalahan.");
 		}

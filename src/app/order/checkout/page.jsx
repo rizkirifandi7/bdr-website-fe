@@ -139,7 +139,7 @@ const PageCheckout = () => {
 								Ordered Items ({totalQuantity})
 							</h1>
 							<Link
-								href="order"
+								href="/order/ordermenu"
 								className="inline-flex items-center gap-0.5 px-2 py-1 rounded-lg text-sm bg-white text-black shadow-none border border-orange-400 hover:bg-orange-400 hover:text-white"
 							>
 								<MdAdd className="text-sm" />

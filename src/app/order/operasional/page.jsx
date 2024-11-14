@@ -44,7 +44,7 @@ const PageOperasional = () => {
 
 					<Link
 						href="/order/ordermenu"
-						className="fixed top-5 left-5 p-2 bg-white rounded-lg hover:bg-gray-100"
+						className="fixed top-0 mt-4 ml-4 left-1/2 transform -translate-x-1/2 z-50 max-w-[498px] w-full"
 					>
 						<FaArrowLeft className="text-xl" />
 					</Link>
