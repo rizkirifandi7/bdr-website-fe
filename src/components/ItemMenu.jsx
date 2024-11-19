@@ -11,7 +11,7 @@ const ItemMenu = ({ data }) => {
 		<div className="flex justify-between items-center gap-2">
 			<div className="flex items-center gap-3 w-[300px] h-[120px]">
 				<Image
-					src={`http://localhost:8000/api/menu/view/${data.gambar}`}
+					src={`${process.env.NEXT_PUBLIC_API_URL}/menu/view/${data.gambar}`}
 					width={80}
 					height={80}
 					alt="menu"

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getCookie } from "./actions/cookies";
-import { toast } from "sonner";
 
 export async function middleware(request) {
 	const token = await getCookie("auth_session");

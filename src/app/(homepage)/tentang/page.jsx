@@ -1,4 +1,4 @@
-import Tentang from "@/components/Tentang";
+import Tentang from "@/components/homepage/Tentang";
 import React from "react";
 
 const PageTentang = () => {

@@ -11,13 +11,13 @@ const MenuPage = () => {
 	const [selectedCategory, setSelectedCategory] = useState(null);
 
 	const fetchData = async () => {
-		const response = await fetch("http://localhost:8000/api/menu");
+		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/menu`);
 		const data = await response.json();
 		setDataMenus(data.data);
 	};
 
 	const fetchKategori = async () => {
-		const response = await fetch("http://localhost:8000/api/kategori");
+		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/kategori`);
 		const data = await response.json();
 		setDataFilterMenu(data.data);
 	};
@@ -64,7 +64,7 @@ const MenuPage = () => {
 									<Card key={data.id} className="flex-col rounded-md p-3">
 										<div className="bg-slate-100 rounded-lg">
 											<Image
-												src={`http://localhost:8000/api/menu/view/${data.gambar}`}
+												src={`${process.env.NEXT_PUBLIC_API_URL}/menu/view/${data.gambar}`}
 												alt={data.nama_menu}
 												width={300}
 												height={300}

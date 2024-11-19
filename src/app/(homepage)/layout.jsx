@@ -1,5 +1,7 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import Head from "next/head";
+import { Fragment } from "react";
 
 export const metadata = {
 	title: "Homepage | Bakso Dono Reborn",
@@ -8,10 +10,10 @@ export const metadata = {
 
 export default function HomeRoot({ children }) {
 	return (
-		<>
+		<Fragment>
 			<Navbar />
 			{children}
 			<Footer />
-		</>
+		</Fragment>
 	);
 }

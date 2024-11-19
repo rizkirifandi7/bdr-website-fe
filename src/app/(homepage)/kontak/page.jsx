@@ -1,8 +1,12 @@
-import Kontak from "@/components/Kontak";
+import Kontak from "@/components/homepage/Kontak";
 import React from "react";
 
 const PageKontak = () => {
-	return <Kontak />;
+	return (
+		<>
+			<Kontak />
+		</>
+	);
 };
 
 export default PageKontak;

@@ -1,4 +1,4 @@
-import Layanan from "@/components/Layanan";
+import Layanan from "@/components/homepage/Layanan";
 import React from "react";
 
 const PageLayanan = () => {
