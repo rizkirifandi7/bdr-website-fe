@@ -108,10 +108,10 @@ const TableBody = ({ rowData }) => (
 	</>
 );
 
-const TableTotal = ({ rowData }) => (
+const TableCatatan = ({ rowData }) => (
 	<View style={styles.tableTotal}>
 		<Text>Catatan:</Text>
-		<Text>Sambelnya Banyak</Text>
+		<Text>{rowData}</Text>
 	</View>
 );
 
@@ -131,7 +131,7 @@ const Invoice = ({ rowData }) => {
 				<Separator />
 				<TableHead />
 				<TableBody rowData={rowData} />
-				<TableTotal rowData={rowData} />
+				<TableCatatan rowData={rowData.catatan} />
 			</Page>
 		</Document>
 	);

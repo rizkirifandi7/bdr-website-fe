@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { generateCodePayment } from "@/lib/generateId";
 import axios from "axios";
 import useFcmToken from "@/hooks/useFcmToken";
+import { Textarea } from "@/components/ui/textarea";
 
 const PageCheckout = () => {
 	const router = useRouter();
@@ -32,6 +33,7 @@ const PageCheckout = () => {
 	} = useCart();
 	const [tokenPay, setTokenPay] = useState(null);
 	const [codePayment, setCodePayment] = useState(null);
+	const [note, setNote] = useState("");
 	const { token } = useFcmToken();
 
 	const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -100,6 +102,7 @@ const PageCheckout = () => {
 						code_payment: codePayment,
 						nama_pelanggan: name,
 						status,
+						catatan: note,
 					},
 					{
 						headers: {
@@ -141,6 +144,7 @@ const PageCheckout = () => {
 			}
 		}
 	}, [
+		note,
 		token,
 		tokenPay,
 		tableNumber,
@@ -223,6 +227,17 @@ const PageCheckout = () => {
 								<ItemMenu key={index} data={data} menu={"cart"} />
 							))}
 						</div>
+					</div>
+				</div>
+
+				<div className="bg-white m-4">
+					<div className="p-4 border rounded-lg">
+						<Textarea
+							value={note}
+							onChange={(e) => setNote(e.target.value)}
+							className="w-full h-[100px] p-2 border rounded"
+							placeholder="Catatan..."
+						/>
 					</div>
 				</div>
 

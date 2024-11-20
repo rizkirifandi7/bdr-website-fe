@@ -111,6 +111,11 @@ const DetailPesanan = ({ rowData }) => {
 									</div>
 								))}
 							</div>
+							<div className="border p-4 rounded-lg">
+								<h1 className="font-semibold">Catatan:</h1>
+								<p>{selectedRowData.catatan}</p>
+							</div>
+
 							<div className="p-4 border rounded-lg">
 								<h1 className="font-semibold text-lg mb-2">Payment Details</h1>
 								<div className="flex flex-col gap-2">
