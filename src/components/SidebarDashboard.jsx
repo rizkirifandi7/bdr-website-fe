@@ -103,8 +103,6 @@ const SidebarDashboard = ({ children }) => {
 	const [user, setUser] = React.useState(null);
 	const { token, notifications } = useFcmToken();
 
-	console.log("notifications", notifications);
-
 	const handleLogout = async () => {
 		try {
 			const response = await Logout();
@@ -130,7 +128,6 @@ const SidebarDashboard = ({ children }) => {
 		if (token) {
 			const messaging = getMessaging();
 			const unsubscribe = onMessage(messaging, (payload) => {
-				console.log("Notification received:", payload);
 				toast.info(
 					`${payload.notification.title}: ${payload.notification.body}`
 				);

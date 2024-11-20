@@ -25,7 +25,6 @@ const PageFeedback = () => {
 			accessorKey: "nama_pelanggan",
 			header: "Nama",
 			cell: ({ row }) => (
-				console.log(row.original),
 				(<div className="capitalize">{row.getValue("nama_pelanggan")}</div>)
 			),
 		},

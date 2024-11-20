@@ -58,7 +58,6 @@ const UpdateMeja = ({ fetchMeja, rowData, id }) => {
 				}
 			);
 
-			console.log(response);
 
 			if (response.status === 200) {
 				toast.success("Meja berhasil ditambahkan");

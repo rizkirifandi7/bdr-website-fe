@@ -26,7 +26,6 @@ async function getNotificationPermissionAndToken() {
 		}
 	}
 
-	console.log("Notification permission not granted.");
 	return null;
 }
 
@@ -95,7 +94,6 @@ const useFcmToken = () => {
 		const setupListener = async () => {
 			if (!token) return; // Exit if no token is available.
 
-			console.log(`onMessage registered with token ${token}`);
 			const m = await messaging();
 			if (!m) return;
 
@@ -107,7 +105,6 @@ const useFcmToken = () => {
 					payload.notification,
 				]);
 
-				console.log("Foreground push notification received:", payload);
 				const link = payload.fcmOptions?.link || payload.data?.link;
 
 				if (link) {

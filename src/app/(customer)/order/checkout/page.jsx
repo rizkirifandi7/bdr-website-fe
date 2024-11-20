@@ -136,7 +136,7 @@ const PageCheckout = () => {
 					onClose: () => setTokenPay(null),
 				});
 			} catch (err) {
-				alert("Error");
+				toast.error("Error");
 				console.log(err);
 			}
 		}

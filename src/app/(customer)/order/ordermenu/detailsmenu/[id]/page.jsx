@@ -19,8 +19,6 @@ const PageDetailMenu = () => {
 	const { id } = useParams();
 	const [menu, setMenu] = useState([]);
 
-	console.log(menu);
-
 	useEffect(() => {
 		const fetchData = async () => {
 			const response = await fetch(
