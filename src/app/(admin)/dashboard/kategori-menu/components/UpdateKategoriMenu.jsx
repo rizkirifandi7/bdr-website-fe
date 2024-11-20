@@ -84,7 +84,7 @@ const UpdateKategoriMenu = ({ fetchDataKategoriMenu, id, rowData }) => {
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Update Menu</DialogTitle>
+					<DialogTitle>Update Kategori Menu</DialogTitle>
 					<DialogDescription>Update kategori menu</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>

@@ -33,11 +33,9 @@ const Footer = () => {
 					</div>
 					<div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
 						<FooterSection title="Perusahaan">
-							<FooterLink href="#">Tentang Kami</FooterLink>
-							<FooterLink href="#">Kontak Kami</FooterLink>
-							<FooterLink href="#">Reservasi</FooterLink>
-							<FooterLink href="#">Kebijakan Privasi</FooterLink>
-							<FooterLink href="#">Syarat & Ketentuan</FooterLink>
+							<FooterLink href="/tentang">Tentang Kami</FooterLink>
+							<FooterLink href="/kontak">Kontak Kami</FooterLink>
+							<FooterLink href="/reservasi">Reservasi</FooterLink>
 						</FooterSection>
 						<FooterSection title="Kontak">
 							<p>

@@ -79,13 +79,13 @@ const TambahKategoriMenu = ({ fetchDataKategoriMenu }) => {
 			<DialogTrigger asChild>
 				<Button>
 					<PlusCircle />
-					Tambah Menu
+					Tambah Kategori Menu
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Tambah Menu</DialogTitle>
-					<DialogDescription>Tambahkan menu baru.</DialogDescription>
+					<DialogTitle>Tambah Kategori Menu</DialogTitle>
+					<DialogDescription>Tambahkan kategori menu baru.</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
 					<form

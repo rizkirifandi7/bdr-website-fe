@@ -124,7 +124,8 @@ const PagePesanan = () => {
 			return;
 		}
 
-		setDataUser(response.data.data);
+		const reversedData = response.data.data.reverse();
+		setDataUser(reversedData);
 	}, []);
 
 	React.useEffect(() => {

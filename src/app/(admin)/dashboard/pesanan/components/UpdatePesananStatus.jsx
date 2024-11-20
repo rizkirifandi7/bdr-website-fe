@@ -29,16 +29,47 @@ const UpdatePesananStatus = ({ row }) => {
 		await updateStatus(row.original.id, value);
 	};
 
+	const getColor = (value) => {
+		switch (value) {
+			case "completed":
+				return "green";
+			case "pending":
+				return "orange";
+			case "preparing":
+				return "blue";
+			case "canceled":
+				return "red";
+			default:
+				return "black";
+		}
+	};
+
 	return (
 		<Select value={status} onValueChange={handleChange}>
-			<SelectTrigger className="w-[180px]">
+			<SelectTrigger
+				className="w-[180px]"
+				style={{
+					color: getColor(status),
+					borderColor: getColor(status),
+					borderWidth: "1px",
+					borderStyle: "solid",
+				}}
+			>
 				<SelectValue placeholder="Status" />
 			</SelectTrigger>
 			<SelectContent>
-				<SelectItem value="completed">Completed</SelectItem>
-				<SelectItem value="pending">Pending</SelectItem>
-				<SelectItem value="preparing">Preparing</SelectItem>
-				<SelectItem value="canceled">Canceled</SelectItem>
+				<SelectItem value="completed" style={{ color: "green" }}>
+					Completed
+				</SelectItem>
+				<SelectItem value="pending" style={{ color: "orange" }}>
+					Pending
+				</SelectItem>
+				<SelectItem value="preparing" style={{ color: "blue" }}>
+					Preparing
+				</SelectItem>
+				<SelectItem value="canceled" style={{ color: "red" }}>
+					Canceled
+				</SelectItem>
 			</SelectContent>
 		</Select>
 	);

@@ -8,6 +8,7 @@ import DashboardCard from "./components/DashboardCard";
 
 const PageHomeDashboard = () => {
 	const [infoDataPesanan, setInfoDataPesanan] = React.useState([]);
+	const [reservasiData, setReservasiData] = React.useState([]);
 	const [percentageChange, setPercentageChange] = React.useState({
 		orders: 0,
 		revenue: 0,
@@ -19,10 +20,10 @@ const PageHomeDashboard = () => {
 		const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
 
 		const currentMonthData = data.filter(
-			(order) => new Date(order.tanggal).getMonth() === currentMonth
+			(order) => new Date(order.order_time).getMonth() === currentMonth
 		);
 		const previousMonthData = data.filter(
-			(order) => new Date(order.tanggal).getMonth() === previousMonth
+			(order) => new Date(order.order_time).getMonth() === previousMonth
 		);
 
 		const currentMonthOrders = currentMonthData.length;
@@ -73,17 +74,21 @@ const PageHomeDashboard = () => {
 		return infoDataPesanan.reduce((acc, order) => acc + order.total, 0);
 	}, [infoDataPesanan]);
 
-	const activeTablesCount = React.useMemo(() => {
-		return new Set(infoDataPesanan.map((order) => order.id_meja)).size;
+	const totalRevenueToday = React.useMemo(() => {
+		const today = new Date();
+		return infoDataPesanan
+			.filter((order) => {
+				const orderDate = new Date(order.order_time);
+				return (
+					orderDate.getDate() === today.getDate() &&
+					orderDate.getMonth() === today.getMonth() &&
+					orderDate.getFullYear() === today.getFullYear()
+				);
+			})
+			.reduce((acc, order) => acc + order.total, 0);
 	}, [infoDataPesanan]);
 
-	const topMenu = React.useMemo(() => {
-		return Object.entries(menuCounts)
-			.sort((a, b) => b[1] - a[1])[0]?.[0]
-			?.split(" ")
-			.slice(0, 2)
-			.join(" ");
-	}, [menuCounts]);
+	const totalReservations = reservasiData.length;
 
 	React.useEffect(() => {
 		const fetchData = async () => {
@@ -95,7 +100,16 @@ const PageHomeDashboard = () => {
 			calculatePercentageChange(data.data);
 		};
 
+		const fetchDataReservasi = async () => {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/reservasi`
+			);
+			const data = await response.json();
+			setReservasiData(data.data);
+		};
+
 		fetchData();
+		fetchDataReservasi();
 	}, [calculatePercentageChange]);
 
 	return (
@@ -112,12 +126,11 @@ const PageHomeDashboard = () => {
 					value={formatRupiah(totalRevenue)}
 					percentageChange={percentageChange.revenue}
 				/>
+				<DashboardCard title="Reservasi" value={totalReservations} />
 				<DashboardCard
-					title="Meja Aktif"
-					value={activeTablesCount}
-					percentageChange={percentageChange.activeTables}
+					title="Pendapatan Hari Ini"
+					value={formatRupiah(totalRevenueToday)}
 				/>
-				<DashboardCard title="Menu Terlaris" value={topMenu} />
 			</div>
 			<div className="grid auto-rows-min gap-4 md:grid-cols-2">
 				<ChartInfo orders={infoDataPesanan} />

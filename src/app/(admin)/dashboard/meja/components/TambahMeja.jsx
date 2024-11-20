@@ -58,14 +58,14 @@ const TambahMeja = ({ fetchMeja }) => {
 			);
 
 			if (response.status === 201) {
-				toast.success("Kategori Menu berhasil ditambahkan");
+				toast.success("Meja berhasil ditambahkan");
 				form.reset();
 				setOpenTambah(false);
 				fetchMeja();
 			}
 		} catch (error) {
-			console.error("Error adding kategori menu:", error);
-			toast.error("Gagal menambahkan kategori menu");
+			console.error("Error adding  meja:", error);
+			toast.error("Gagal menambahkan  meja");
 		}
 	};
 
@@ -74,13 +74,13 @@ const TambahMeja = ({ fetchMeja }) => {
 			<DialogTrigger asChild>
 				<Button>
 					<PlusCircle />
-					Tambah Menu
+					Tambah Meja
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Tambah Menu</DialogTitle>
-					<DialogDescription>Tambahkan menu baru.</DialogDescription>
+					<DialogTitle>Tambah Meja</DialogTitle>
+					<DialogDescription>Tambahkan meja baru.</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
 					<form

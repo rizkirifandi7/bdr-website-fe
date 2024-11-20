@@ -47,9 +47,9 @@ const HapusMeja = ({ id, fetchMeja }) => {
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Hapus User</DialogTitle>
+					<DialogTitle>Hapus Meja</DialogTitle>
 					<DialogDescription>
-						Apakah anda yakin ingin menghapus user ini?
+						Apakah anda yakin ingin menghapus meja ini?
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>

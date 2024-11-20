@@ -61,14 +61,14 @@ const UpdateMeja = ({ fetchMeja, rowData, id }) => {
 			console.log(response);
 
 			if (response.status === 200) {
-				toast.success("Kategori Meja berhasil ditambahkan");
+				toast.success("Meja berhasil ditambahkan");
 				form.reset();
 				setOpenTambah(false);
 				fetchMeja();
 			}
 		} catch (error) {
-			console.error("Error adding kategori meja:", error);
-			toast.error("Gagal menambahkan kategori meja");
+			console.error("Error adding meja:", error);
+			toast.error("Gagal menambahkan meja");
 		}
 	};
 

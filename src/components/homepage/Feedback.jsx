@@ -9,11 +9,30 @@ import {
 	CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import Image from "next/image";
 import React from "react";
-import Menu1 from "@/assets/bg-hero.jpg";
+import axios from "axios";
+import { FaRegUser } from "react-icons/fa";
 
 const Feedback = () => {
+	const [feedback, setFeedback] = React.useState([]);
+
+	const filteredFeedback = feedback.filter((item) => item.rating >= 4);
+
+	React.useEffect(() => {
+		const fetchDataFeedback = async () => {
+			try {
+				const response = await axios.get(
+					`${process.env.NEXT_PUBLIC_API_URL}/feedback`
+				);
+				setFeedback(response.data.data);
+			} catch (error) {
+				toast.error("Gagal mengambil data feedback");
+			}
+		};
+
+		fetchDataFeedback();
+	}, []);
+
 	return (
 		<section className="min-h-[80vh] pt-40" id="layanan">
 			<div className="max-w-screen-xl mx-auto">
@@ -30,24 +49,22 @@ const Feedback = () => {
 					]}
 				>
 					<CarouselContent className="-ml-1">
-						{Array.from({ length: 5 }).map((_, index) => (
+						{filteredFeedback.map((feedback, index) => (
 							<CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
 								<div className="p-2">
 									<Card className="rounded-md">
-										<CardContent className="flex flex-col items-center justify-center p-0 ">
-											<div className="p-6">
+										<CardContent className="flex flex-col items-center justify-start p-0 ">
+											<div className="p-6 w-full">
 												<div className="flex gap-3 items-center">
-													<Image
-														src={Menu1}
-														alt=""
-														className="w-10 h-10 bg-center bg-no-repeat bg-cover rounded-full"
-													/>
-													<p className="text-xl font-bold">Bakso Urat</p>
+													<div className="text-xl text-orange-400 border p-1 rounded-lg border-orange-400">
+														<FaRegUser />
+													</div>
+													<p className="text-xl font-semibold">
+														{feedback.nama_pelanggan}
+													</p>
 												</div>
-												<p className="text-pretty text-gray-500 text-base mt-2">
-													Lorem ipsum dolor sit amet consectetur adipisicing
-													elit. Aliquid illo illum quo tempora odio velit
-													necessitatibus vitae assumenda voluptas iusto.
+												<p className="text-pretty text-base mt-2 break-words w-[full]">
+													{feedback.deskripsi}
 												</p>
 											</div>
 										</CardContent>

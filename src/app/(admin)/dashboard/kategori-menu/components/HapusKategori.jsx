@@ -49,9 +49,9 @@ const HapusKategori = ({ id, fetchDataKategoriMenu }) => {
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Hapus Menu</DialogTitle>
+					<DialogTitle>Hapus Kategori Menu</DialogTitle>
 					<DialogDescription>
-						Apakah anda yakin ingin menghapus menu ini?
+						Apakah anda yakin ingin menghapus kategori menu ini?
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>

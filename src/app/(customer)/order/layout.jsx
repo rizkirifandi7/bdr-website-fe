@@ -4,11 +4,9 @@ import { Fragment } from "react";
 export const metadata = {
 	title: "Order | Bakso Dono Reborn",
 	description: "Bakso Dono Reborn",
-	icons: {
-		shortcut: "favicon-ico",
-		apple: "favicon-ico",
-		manifest: "favicon-ico",
-	},
+	icons:{
+		icon: "/favicon.ico",
+	}
 };
 
 export default function OrderRoot({ children }) {

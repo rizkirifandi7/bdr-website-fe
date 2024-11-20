@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { generateCodePayment } from "@/lib/generateId";
 import axios from "axios";
-import { useNotification } from "@/hooks/NotifcationContext";
+import useFcmToken from "@/hooks/useFcmToken";
 
 const PageCheckout = () => {
 	const router = useRouter();
@@ -30,8 +30,10 @@ const PageCheckout = () => {
 		setName,
 		name,
 	} = useCart();
-	const [token, setToken] = useState(null);
+	const [tokenPay, setTokenPay] = useState(null);
 	const [codePayment, setCodePayment] = useState(null);
+	const { token } = useFcmToken();
+
 	const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 	const totalPrice = getTotalPrice();
 	const itemsToOrder = cart.map((item) => ({
@@ -66,7 +68,7 @@ const PageCheckout = () => {
 			}
 
 			const data = await response.json();
-			setToken(data.token);
+			setTokenPay(data.token);
 		} catch (error) {
 			console.error("Error placing order:", error);
 			toast.error("An error occurred while placing the order");
@@ -86,7 +88,7 @@ const PageCheckout = () => {
 	}, []);
 
 	useEffect(() => {
-		if (token) {
+		if (tokenPay) {
 			const handlePayment = async (status) => {
 				const response = await axios.post(
 					`${process.env.NEXT_PUBLIC_API_URL}/pesanan`,
@@ -107,11 +109,19 @@ const PageCheckout = () => {
 				);
 
 				if (response.data) {
-					setToken(null);
+					setTokenPay(null);
 					setName("");
 					setCart([]);
 					setTableNumber("");
 					setTypeOrder("");
+					await axios.post("/api/send-notification", {
+						token,
+						title: "Pesanan Baru Diterima",
+						message:
+							typeOrder === "Dine In"
+								? `dari ${name} dengan nomor meja ${tableNumber}`
+								: `dari ${name} untuk dibawa pulang`,
+					});
 					router.push(
 						`http://localhost:3000/order/order-detail/${response.data.data.code_payment}`
 					);
@@ -119,11 +129,11 @@ const PageCheckout = () => {
 			};
 
 			try {
-				window.snap.pay(token, {
+				window.snap.pay(tokenPay, {
 					onSuccess: () => handlePayment("preparing"),
 					onPending: () => handlePayment("pending"),
 					onError: () => toast.error("Payment failed"),
-					onClose: () => setToken(null),
+					onClose: () => setTokenPay(null),
 				});
 			} catch (err) {
 				alert("Error");
@@ -132,6 +142,7 @@ const PageCheckout = () => {
 		}
 	}, [
 		token,
+		tokenPay,
 		tableNumber,
 		typeOrder,
 		totalPrice,

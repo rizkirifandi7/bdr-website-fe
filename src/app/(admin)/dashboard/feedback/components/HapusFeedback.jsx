@@ -13,18 +13,18 @@ import React from "react";
 import { FiTrash2 } from "react-icons/fi";
 import { toast } from "sonner";
 
-const HapusPesanan = ({ fetchDataPesanan, id }) => {
+const HapusFeedback = ({ fetchDataFeedback, id }) => {
 	const [openHapus, setOpenHapus] = React.useState(false);
 	const [selectedId, setSelectedId] = React.useState(null);
 
 	const handleDelete = async () => {
 		const response = await axios.delete(
-			`${process.env.NEXT_PUBLIC_API_URL}/pesanan/${selectedId}`
+			`${process.env.NEXT_PUBLIC_API_URL}/feedback/${selectedId}`
 		);
 
 		if (response.status === 200) {
 			toast.success("Data berhasil dihapus.");
-			fetchDataPesanan();
+			fetchDataFeedback();
 			setOpenHapus(false);
 		} else {
 			toast.error("Terjadi kesalahan.");
@@ -48,9 +48,9 @@ const HapusPesanan = ({ fetchDataPesanan, id }) => {
 				</DialogTrigger>
 				<DialogContent className="sm:max-w-[425px]">
 					<DialogHeader>
-						<DialogTitle>Hapus Pesanan</DialogTitle>
+						<DialogTitle>Hapus Feedback</DialogTitle>
 						<DialogDescription>
-							Apakah anda yakin ingin menghapus pesanan ini?
+							Apakah anda yakin ingin menghapus feedback ini?
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>
@@ -73,4 +73,4 @@ const HapusPesanan = ({ fetchDataPesanan, id }) => {
 	);
 };
 
-export default HapusPesanan;
+export default HapusFeedback;

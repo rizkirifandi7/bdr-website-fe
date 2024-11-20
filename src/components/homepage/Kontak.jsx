@@ -1,8 +1,6 @@
 import React from "react";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
 import Link from "next/link";
+import { FaArrowRight } from "react-icons/fa6";
 
 const Kontak = () => {
 	return (
@@ -12,22 +10,7 @@ const Kontak = () => {
 					<p className="text-xl text-[#FEA92B] font-custom">Hubungi Kami</p>
 					<h1 className="text-4xl md:text-5xl font-bold">Kontak</h1>
 				</div>
-				<div className="flex w-full gap-4 my-8">
-					<Link
-						href="https://wa.link/7q4vpu"
-						className=" w-full p-4 rounded-md space-y-2 text-center border hover:bg-slate-100"
-					>
-						<p className="font-custom text-headingText">Whatapps</p>
-						<p>+62 895 6099 77877</p>
-					</Link>
-					<Link
-						href="#"
-						className=" w-full p-4 rounded-md space-y-2 text-center border hover:bg-slate-100"
-					>
-						<p className="font-custom text-headingText">Email</p>
-						<p>baksodonoreborn@gmail.com</p>
-					</Link>
-				</div>
+
 				<div className="flex flex-row rounded-md gap-10 mt-10">
 					<div className="w-full h-[500px] rounded-md">
 						<iframe
@@ -41,37 +24,25 @@ const Kontak = () => {
 							tabIndex="0"
 						></iframe>
 					</div>
-					<div className="flex flex-col justify-start w-full h-[600px] ">
-						<div className="flex flex-col w-full gap-4">
-							<div className="">
-								<h1 className="font-bold text-2xl">Ajukan Pertanyaan</h1>
-							</div>
-							<div className="flex gap-4">
-								<Input
-									type="text"
-									className="bg-white text-black text-base rounded-sm h-[60px]"
-									placeholder="Nama Anda"
-								/>
-								<Input
-									type="text"
-									className="bg-white text-black text-base rounded-sm h-[60px]"
-									placeholder="Email anda"
-								/>
-							</div>
-							<div className="flex gap-4 w-full">
-								<Input
-									type="text"
-									className="bg-white text-black text-base rounded-sm h-[60px]"
-									placeholder="Subjek"
-								/>
-							</div>
-							<Textarea
-								placeholder="Pesan"
-								className="bg-white text-black text-base rounded-none h-[100px]"
-							/>
-							<Button className="bg-[#FEA92B] text-white h-[60px] rounded-sm mb-3">
-								Submit
-							</Button>
+					<div className="flex flex-col w-full gap-4">
+						<Link
+							href="https://wa.link/7q4vpu"
+							className="w-full flex flex-col gap-2 p-4 rounded-md space-y-2 text-center justify-center border hover:bg-slate-100"
+							role="button"
+							aria-label="Hubungi kami melalui WhatsApp"
+						>
+							<p className="font-custom text-headingText">WhatsApp</p>
+							<p className="font-semibold">+62 895 6099 77877</p>
+							<p className="flex items-center justify-center gap-1 text-gray-500">
+								Hubungi kami melalui WhatsApp
+								<span className="text-sm">
+									<FaArrowRight />
+								</span>
+							</p>
+						</Link>
+						<div className=" w-full p-4 rounded-md space-y-2 text-center border">
+							<p className="font-custom text-headingText">Email</p>
+							<p className="font-semibold">baksodonoreborn@gmail.com</p>
 						</div>
 					</div>
 				</div>
