@@ -3,13 +3,13 @@ import { getMessaging, getToken, isSupported } from "firebase/messaging";
 
 // Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
-	apiKey: "AIzaSyAjnl_bBTidIg8xPvMvaEtLA4yIv9gfGSc",
-	authDomain: "dbr-notification.firebaseapp.com",
-	projectId: "dbr-notification",
-	storageBucket: "dbr-notification.firebasestorage.app",
-	messagingSenderId: "725148926243",
-	appId: "1:725148926243:web:c52a15091fd0fb0d0ccc96",
-	measurementId: "G-550GX4T5TE",
+	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+	authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+	projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+	storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+	messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+	appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+	measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();

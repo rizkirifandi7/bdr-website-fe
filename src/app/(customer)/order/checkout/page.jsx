@@ -123,7 +123,7 @@ const PageCheckout = () => {
 								: `dari ${name} untuk dibawa pulang`,
 					});
 					router.push(
-						`http://localhost:3000/order/order-detail/${response.data.data.code_payment}`
+						`${process.env.NEXT_PUBLIC_BASE_URL}/order/order-detail/${response.data.data.code_payment}`
 					);
 				}
 			};
