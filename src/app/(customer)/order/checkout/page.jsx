@@ -1,22 +1,22 @@
 "use client";
 
-import ItemMenu from "@/components/ItemMenu";
 import OrderSection from "@/components/OrderSection";
-import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/CartContext";
 import Link from "next/link";
 import React, { useEffect, useState, useCallback } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
-import OrderSummary from "./components/OrderSummary";
-import { Badge } from "@/components/ui/badge";
-import { MdAdd } from "react-icons/md";
-import { formatRupiah } from "@/lib/formatRupiah";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { generateCodePayment } from "@/lib/generateId";
 import axios from "axios";
 import useFcmToken from "@/hooks/useFcmToken";
 import { Textarea } from "@/components/ui/textarea";
+
+import OrderType from "./components/OrderType";
+import OrderSummary from "./components/OrderSummary";
+import OrderItem from "./components/OrderItem";
+import OrderCustomerAndDate from "./components/OrderCustomerAndDate";
+import ButtonOrder from "./components/ButtonOrder";
 
 const PageCheckout = () => {
 	const router = useRouter();
@@ -175,60 +175,11 @@ const PageCheckout = () => {
 					<div className=""></div>
 				</div>
 
-				<div className="flex justify-between items-center gap-2 m-4 px-4 py-2 rounded-lg border border-headingText bg-orange-50">
-					<p className="text-base font-medium">Order Type</p>
-					<Badge className="bg-white border border-headingText text-black shadow-none hover:bg-white">
-						{typeOrder}
-					</Badge>
-				</div>
+				<OrderType typeOrder={typeOrder} />
 
-				<div className="m-4 bg-white p-4 border rounded-lg">
-					<div className="flex justify-between items-center">
-						<div className="text-start">
-							<p className="text-gray-500 text-sm">Customer</p>
-							<p className="inline-flex items-center gap-1 text-base font-semibold">
-								{name}
-							</p>
-						</div>
-						<div className="text-end">
-							<p className="text-gray-500 text-sm">Date</p>
-							<p className="text-base font-medium">
-								{new Date().toLocaleDateString("id-ID", {
-									day: "numeric",
-									month: "short",
-									year: "numeric",
-								})}
-								,{" "}
-								{new Date().toLocaleTimeString("id-ID", {
-									hour: "2-digit",
-									minute: "2-digit",
-								})}
-							</p>
-						</div>
-					</div>
-				</div>
+				<OrderCustomerAndDate name={name} />
 
-				<div className="bg-white m-4">
-					<div className="flex flex-col p-4 rounded-lg border ">
-						<div className="flex justify-between items-center mb-2">
-							<h1 className="inline-flex items-center font-semibold text-lg">
-								Ordered Items ({totalQuantity})
-							</h1>
-							<Link
-								href="/order/ordermenu"
-								className="inline-flex items-center gap-0.5 px-2 py-1 rounded-lg text-sm bg-white text-black shadow-none border border-orange-400 hover:bg-orange-400 hover:text-white"
-							>
-								<MdAdd className="text-sm" />
-								Add Item
-							</Link>
-						</div>
-						<div className="flex flex-col">
-							{cart.map((data, index) => (
-								<ItemMenu key={index} data={data} menu={"cart"} />
-							))}
-						</div>
-					</div>
-				</div>
+				<OrderItem cart={cart} totalQuantity={totalQuantity} />
 
 				<div className="bg-white m-4">
 					<div className="p-4 border rounded-lg">
@@ -249,20 +200,10 @@ const PageCheckout = () => {
 				/>
 			</div>
 
-			<div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50 max-w-[492px] w-full flex justify-center text-center">
-				<div className="flex justify-between items-center w-full h-[100px] rounded-t-lg shadow-xl bg-orange-50 border-t px-4">
-					<div className="text-start">
-						<p className="text-base">Total Payment</p>
-						<p className="font-bold text-lg">{formatRupiah(totalPrice)}</p>
-					</div>
-					<Button
-						className="bg-orange-500 hover:bg-headingText text-white text-base font-semibold h-[60px] w-fit"
-						onClick={handlePlaceOrder}
-					>
-						Process to Payment
-					</Button>
-				</div>
-			</div>
+			<ButtonOrder
+				handlePlaceOrder={handlePlaceOrder}
+				totalPrice={totalPrice}
+			/>
 		</OrderSection>
 	);
 };

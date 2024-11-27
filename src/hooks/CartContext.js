@@ -17,28 +17,24 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
 	const [cart, setCart] = useState([]);
 	const [typeOrder, setTypeOrder] = useState("");
-	const [tableNumber, setTableNumber] = useState("");
 	const [name, setName] = useState("");
 
 	useEffect(() => {
 		const storedCart = localStorage.getItem("cart");
-		const storedTableNumber = localStorage.getItem("tableNumber");
 		const storedTypeOrder = localStorage.getItem("typeOrder");
 		const storedName = localStorage.getItem("name");
 
 		if (storedCart) setCart(JSON.parse(storedCart));
-		if (storedTableNumber) setTableNumber(storedTableNumber);
 		if (storedTypeOrder) setTypeOrder(storedTypeOrder);
 		if (storedName) setName(storedName);
 	}, []);
 
 	useEffect(() => {
 		localStorage.setItem("cart", JSON.stringify(cart));
-		localStorage.setItem("tableNumber", tableNumber);
 		localStorage.setItem("typeOrder", typeOrder);
 		localStorage.setItem("name", name);
 		Cookies.set("typeOrder", typeOrder);
-	}, [cart, tableNumber, typeOrder, name]);
+	}, [cart, typeOrder, name]);
 
 	const addToCart = useCallback((item) => {
 		setCart((prevCart) => {
@@ -70,7 +66,6 @@ export const CartProvider = ({ children }) => {
 		});
 	}, []);
 
-	const updateTableNumber = useCallback((number) => setTableNumber(number), []);
 	const updateName = useCallback((name) => setName(name), []);
 	const updateTypeOrder = useCallback((type) => setTypeOrder(type), []);
 	const getTotalPrice = useCallback(
@@ -83,15 +78,11 @@ export const CartProvider = ({ children }) => {
 			cart,
 			addToCart,
 			removeFromCart,
-			tableNumber,
-			updateTableNumber,
 			updateName,
 			typeOrder,
 			updateTypeOrder,
 			getTotalPrice,
-			setTableNumber,
 			setCart,
-			setTableNumber,
 			setTypeOrder,
 			setName,
 			name,
@@ -99,11 +90,9 @@ export const CartProvider = ({ children }) => {
 		[
 			cart,
 			name,
-			tableNumber,
 			typeOrder,
 			addToCart,
 			removeFromCart,
-			updateTableNumber,
 			updateTypeOrder,
 			updateName,
 			getTotalPrice,

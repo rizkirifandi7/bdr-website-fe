@@ -67,11 +67,6 @@ const data = {
 					url: "/dashboard/kategori-menu",
 					icon: <LuMenuSquare />,
 				},
-				{
-					title: "Meja",
-					url: "/dashboard/meja",
-					icon: <MdOutlineTableRestaurant />,
-				},
 			],
 		},
 		{
