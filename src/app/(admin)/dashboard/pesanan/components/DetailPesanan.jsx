@@ -37,7 +37,7 @@ const DetailPesanan = ({ rowData }) => {
 						<DialogHeader>
 							<DialogTitle>Detail Pesanan</DialogTitle>
 							<DialogDescription>
-								Detail pesanan untuk ID {selectedRowData.code_payment}
+								Detail pesanan untuk ID {selectedRowData.id}
 							</DialogDescription>
 						</DialogHeader>
 						<div className="flex flex-col gap-4 h-[500px] overflow-y-auto scrollbar-hide">
@@ -50,9 +50,7 @@ const DetailPesanan = ({ rowData }) => {
 							<div className="flex justify-between items-center border rounded-lg p-4">
 								<div className="text-start">
 									<p className="text-sm text-gray-500">Order ID</p>
-									<p className="text-sm font-semibold">
-										{selectedRowData.code_payment}
-									</p>
+									<p className="text-sm font-semibold">#{selectedRowData.id}</p>
 								</div>
 								<div className=" text-end">
 									<p className="text-sm text-gray-500">Tanggal</p>

@@ -61,7 +61,7 @@ const PageOperasional = () => {
 					<p className="text-sm font-medium">
 						How would you line to eat today ?
 					</p>
-					<Link href="/order/ordermenu" className="w-full">
+					<a href="/order/ordermenu" className="w-full">
 						<Button
 							className="w-full py-6 text-sm font-semibold"
 							variant="outline"
@@ -69,9 +69,9 @@ const PageOperasional = () => {
 						>
 							Dine In
 						</Button>
-					</Link>
+					</a>
 
-					<Link href="/order/ordermenu" className="w-full">
+					<a href="/order/ordermenu" className="w-full">
 						<Button
 							className="w-full py-6 text-sm font-semibold"
 							variant="outline"
@@ -79,7 +79,7 @@ const PageOperasional = () => {
 						>
 							Take Away
 						</Button>
-					</Link>
+					</a>
 				</div>
 			</div>
 		</section>

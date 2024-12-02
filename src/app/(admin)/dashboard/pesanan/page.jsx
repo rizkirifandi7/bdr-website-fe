@@ -27,9 +27,9 @@ const PagePesanan = () => {
 			cell: ({ row }) => <div>{row.getValue("nama_pelanggan")}</div>,
 		},
 		{
-			accessorKey: "id_meja",
-			header: "Nomor Meja",
-			cell: ({ row }) => <div>{row.getValue("id_meja")}</div>,
+			accessorKey: "tipe_payment",
+			header: "Payment",
+			cell: ({ row }) => <div>{row.getValue("tipe_payment")}</div>,
 		},
 		{
 			accessorKey: "mode",

@@ -9,11 +9,33 @@ import { formatRupiah } from "@/lib/formatRupiah";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import TambahFeedback from "./components/TambahFeedback";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 const PageOrderDetail = () => {
 	const { id } = useParams();
 	const [order, setOrder] = useState([]);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+	useEffect(() => {
+		if (order.status === "pending") {
+			setIsDialogOpen(true);
+		} else {
+			setIsDialogOpen(false);
+		}
+	}, [order.status]);
+
+	const handleRefresh = () => {
+		window.location.reload();
+	};
 
 	useEffect(() => {
 		const fetchOrder = async () => {
@@ -33,7 +55,7 @@ const PageOrderDetail = () => {
 
 	return (
 		<OrderSection>
-			<div className="min-h-screen  relative overflow-y-auto scrollbar-hide pb-24 pt-16">
+			<div className="min-h-screen relative overflow-y-auto scrollbar-hide pb-24 pt-16">
 				<div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-50 max-w-[492px] w-full flex justify-between items-center bg-white h-[60px] p-4 border-b">
 					<div className=""></div>
 					<h1 className="text-xl font-bold">Order Summary</h1>
@@ -52,7 +74,7 @@ const PageOrderDetail = () => {
 						<div className="text-start">
 							<p className="text-gray-500 text-sm">Order ID</p>
 							<p className="inline-flex items-center gap-1 text-sm font-medium">
-								#{order.code_payment}
+								#{order.id}
 							</p>
 						</div>
 						<div className="text-end">
@@ -125,8 +147,30 @@ const PageOrderDetail = () => {
 					discount={0}
 				/>
 
+				<Dialog open={isDialogOpen}>
+					<DialogContent className="fixed transform -translate-x-1/2 z-50 max-w-[482px] w-full">
+						<DialogHeader>
+							<DialogTitle>Silahkan selesaikan pembayaran di Kasir</DialogTitle>
+							<DialogDescription>
+								Pesanan Anda akan diproses setelah pembayaran selesai
+							</DialogDescription>
+						</DialogHeader>
+						<DialogFooter className="sm:justify-start">
+							<DialogClose asChild>
+								<Button
+									type="button"
+									variant="secondary"
+									className="w-full"
+									onClick={handleRefresh}
+								>
+									Check Status Pembayaran
+								</Button>
+							</DialogClose>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
+
 				<div className="flex items-center mx-4 gap-3">
-					<TambahFeedback order={order} />
 					<Link href={"/order/tipeorder"} className="w-full">
 						<Button
 							variant="outline"

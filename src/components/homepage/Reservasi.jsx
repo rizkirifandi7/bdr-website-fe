@@ -16,18 +16,29 @@ import { format } from "date-fns";
 import axios from "axios";
 import { toast } from "sonner";
 
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+
 const Reservasi = () => {
 	const [date, setDate] = useState();
 	const [name, setName] = useState("");
 	const [phone, setPhone] = useState("");
 	const [people, setPeople] = useState("");
 	const [request, setRequest] = useState("");
+	const [ruangan, setRuangan] = useState("");
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		// Validation
-		if (!name || !phone || !date || !people) {
+		if (!name || !phone || !date || !people || !request || !ruangan) {
 			toast.error("Semua kolom harus diisi.");
 			return;
 		}
@@ -37,7 +48,8 @@ const Reservasi = () => {
 			kontak: phone,
 			tanggal_reservasi: date,
 			jumlah_orang: people,
-			request,
+			catatan: request,
+			ruangan,
 		};
 
 		createReservation(reservationData);
@@ -56,6 +68,7 @@ const Reservasi = () => {
 
 		if (response.status === 201) {
 			toast.success("Reservasi berhasil dibuat.");
+			setRuangan("");
 			setName("");
 			setPhone("");
 			setDate(null);
@@ -140,6 +153,20 @@ const Reservasi = () => {
 										onChange={(e) => setPeople(e.target.value)}
 									/>
 								</div>
+								<Select value={ruangan} onValueChange={setRuangan}>
+									<SelectTrigger className="w-full h-[60px] bg-white text-base rounded-sm">
+										<SelectValue placeholder="Ruangan" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectGroup>
+											<SelectItem value="Lantai 1 Family Place">
+												Lantai 1 Family Place
+											</SelectItem>
+											<SelectItem value="Lantai 2 Karaoke">Lantai 2 Karaoke</SelectItem>
+											<SelectItem value="Lantai 3 Rooftop">Lantai 3 Rooftop</SelectItem>
+										</SelectGroup>
+									</SelectContent>
+								</Select>
 								<Textarea
 									placeholder="Catatan"
 									className="bg-white text-black text-base rounded-sm h-[100px]"

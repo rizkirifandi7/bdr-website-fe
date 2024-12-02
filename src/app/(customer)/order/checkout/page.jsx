@@ -3,9 +3,8 @@
 import OrderSection from "@/components/OrderSection";
 import { useCart } from "@/hooks/CartContext";
 import Link from "next/link";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { generateCodePayment } from "@/lib/generateId";
 import axios from "axios";
@@ -17,24 +16,28 @@ import OrderSummary from "./components/OrderSummary";
 import OrderItem from "./components/OrderItem";
 import OrderCustomerAndDate from "./components/OrderCustomerAndDate";
 import ButtonOrder from "./components/ButtonOrder";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const PageCheckout = () => {
 	const router = useRouter();
 	const {
 		cart,
-		tableNumber,
 		typeOrder,
 		getTotalPrice,
 		setCart,
-		setTableNumber,
 		setTypeOrder,
 		setName,
 		name,
 	} = useCart();
-	const [tokenPay, setTokenPay] = useState(null);
 	const [codePayment, setCodePayment] = useState(null);
 	const [note, setNote] = useState("");
+	const [tipePayment, setTipePayment] = useState("Cash");
 	const { token } = useFcmToken();
+
+	useEffect(() => {
+		const paymentCode = generateCodePayment();
+		setCodePayment(paymentCode);
+	}, []);
 
 	const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 	const totalPrice = getTotalPrice();
@@ -45,123 +48,50 @@ const PageCheckout = () => {
 		nama: item.nama_menu,
 	}));
 
-	const placeOrder = useCallback(async () => {
-		try {
-			const codePayment = generateCodePayment();
-			setCodePayment(codePayment);
+	const handlePaymentChange = (value) => {
+		setTipePayment(value);
+	};
 
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/pesanan/snap-token`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						code_payment: codePayment,
-						total: totalPrice,
-						fullname: name,
-						items: itemsToOrder,
-					}),
-				}
+	const handlePayment = async () => {
+		const response = await axios.post(
+			`${process.env.NEXT_PUBLIC_API_URL}/pesanan`,
+			{
+				tipe_payment: tipePayment,
+				mode: typeOrder,
+				total: totalPrice,
+				items: itemsToOrder,
+				code_payment: codePayment,
+				nama_pelanggan: name,
+				status: "pending",
+				catatan: note,
+			},
+			{
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (response.data) {
+			setName("");
+			setCart([]);
+			setTypeOrder("");
+			await axios.post("/api/send-notification", {
+				token,
+				title: "Pesanan Baru Diterima",
+				message:
+					typeOrder === "Dine In"
+						? `dari ${name}`
+						: `dari ${name} untuk dibawa pulang`,
+			});
+			router.push(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/order/order-detail/${response.data.data.code_payment}`
 			);
-
-			if (!response.ok) {
-				toast.error("Failed to place order");
-				throw new Error("Failed to place order");
-			}
-
-			const data = await response.json();
-			setTokenPay(data.token);
-		} catch (error) {
-			console.error("Error placing order:", error);
-			toast.error("An error occurred while placing the order");
 		}
-	}, [totalPrice, name, itemsToOrder]);
-
-	useEffect(() => {
-		const midtransUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
-		const script = document.createElement("script");
-		script.src = midtransUrl;
-		script.setAttribute("data-client-key", "SB-Mid-client-PkQyNqBpQWvcUAom");
-		document.body.appendChild(script);
-
-		return () => {
-			document.body.removeChild(script);
-		};
-	}, []);
-
-	useEffect(() => {
-		if (tokenPay) {
-			const handlePayment = async (status) => {
-				const response = await axios.post(
-					`${process.env.NEXT_PUBLIC_API_URL}/pesanan`,
-					{
-						id_meja: tableNumber,
-						mode: typeOrder,
-						total: totalPrice,
-						items: itemsToOrder,
-						code_payment: codePayment,
-						nama_pelanggan: name,
-						status,
-						catatan: note,
-					},
-					{
-						headers: {
-							"Content-Type": "application/json",
-						},
-					}
-				);
-
-				if (response.data) {
-					setTokenPay(null);
-					setName("");
-					setCart([]);
-					setTableNumber("");
-					setTypeOrder("");
-					await axios.post("/api/send-notification", {
-						token,
-						title: "Pesanan Baru Diterima",
-						message:
-							typeOrder === "Dine In"
-								? `dari ${name} dengan nomor meja ${tableNumber}`
-								: `dari ${name} untuk dibawa pulang`,
-					});
-					router.push(
-						`${process.env.NEXT_PUBLIC_BASE_URL}/order/order-detail/${response.data.data.code_payment}`
-					);
-				}
-			};
-
-			try {
-				window.snap.pay(tokenPay, {
-					onSuccess: () => handlePayment("preparing"),
-					onPending: () => handlePayment("pending"),
-					onError: () => toast.error("Payment failed"),
-					onClose: () => setTokenPay(null),
-				});
-			} catch (err) {
-				toast.error("Error");
-				console.log(err);
-			}
-		}
-	}, [
-		note,
-		token,
-		tokenPay,
-		tableNumber,
-		typeOrder,
-		totalPrice,
-		itemsToOrder,
-		codePayment,
-		name,
-		router,
-		setCart,
-		setName,
-		setTableNumber,
-		setTypeOrder,
-	]);
+	};
 
 	const handlePlaceOrder = async () => {
-		await placeOrder();
+		await handlePayment();
 	};
 
 	return (
@@ -189,6 +119,36 @@ const PageCheckout = () => {
 							className="w-full h-[100px] p-2 border rounded"
 							placeholder="Catatan..."
 						/>
+					</div>
+				</div>
+
+				<div className="bg-white m-4">
+					<div className="p-4 border rounded-lg">
+						<h1 className="font-semibold text-base mb-2">Payment Method</h1>
+						<RadioGroup value={tipePayment} onValueChange={handlePaymentChange}>
+							<div className="flex justify-between items-center hover:bg-slate-100 rounded-lg py-0.5 w-full">
+								<label
+									htmlFor="r1"
+									className="flex justify-between items-center w-full cursor-pointer"
+								>
+									<span className="text-base">Cash</span>
+									<RadioGroupItem value="cash" id="r1" className="w-6 h-6" />
+								</label>
+							</div>
+							<div className="flex justify-between items-center hover:bg-slate-100 rounded-lg py-0.5 w-full">
+								<label
+									htmlFor="r2"
+									className="flex justify-between items-center w-full cursor-pointer"
+								>
+									<span className="text-base">Transfer</span>
+									<RadioGroupItem
+										value="transfer"
+										id="r2"
+										className="w-6 h-6"
+									/>
+								</label>
+							</div>
+						</RadioGroup>
 					</div>
 				</div>
 

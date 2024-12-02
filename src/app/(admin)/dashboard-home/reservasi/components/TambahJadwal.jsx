@@ -23,6 +23,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatDateToISO } from "@/lib/formatDate";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -191,6 +192,50 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 											{...field}
 											type="number"
 										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="catatan"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Catatan</FormLabel>
+									<FormControl>
+										<Input
+											className="shadow-none w-[320px] md:w-full"
+											placeholder="masukkan catatan..."
+											{...field}
+											type="text"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="ruangan"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Ruangan</FormLabel>
+									<FormControl>
+										<Select
+											onValueChange={field.onChange}
+											defaultValue={field.value}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Ruangan" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												<SelectItem value="lantai 1">lantai 1</SelectItem>
+												<SelectItem value="Outdoor">Outdoor</SelectItem>
+											</SelectContent>
+										</Select>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
