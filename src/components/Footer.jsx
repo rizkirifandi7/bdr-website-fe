@@ -21,7 +21,7 @@ const FooterSection = ({ title, children }) => (
 const Footer = () => {
 	return (
 		<footer className="bg-[#0F172B] mt-20">
-			<div className="flex flex-col justify-between mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8 h-[400px]">
+			<div className="flex flex-col justify-between mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8 md:h-[400px] h-full">
 				<div className="md:flex md:justify-between">
 					<div className="mb-6 md:mb-0">
 						<a href="#" className="flex gap-2 items-center">
@@ -31,7 +31,7 @@ const Footer = () => {
 							</span>
 						</a>
 					</div>
-					<div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+					<div className="grid grid-cols-1 md:gap-8 gap-6 md:grid-cols-3">
 						<FooterSection title="Perusahaan">
 							<FooterLink href="/tentang">Tentang Kami</FooterLink>
 							<FooterLink href="/kontak">Kontak Kami</FooterLink>
@@ -51,7 +51,7 @@ const Footer = () => {
 						</FooterSection>
 					</div>
 				</div>
-				<div className="sm:flex sm:items-center sm:justify-between border-t-2 pt-8 border-gray-700">
+				<div className="sm:flex sm:items-center sm:justify-between border-t-2 pt-8 mt-10 md:mt-0 border-gray-700">
 					<span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
 						© 2024{" "}
 						<a href="#" className="hover:underline">

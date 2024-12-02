@@ -13,7 +13,7 @@ const Layanan = () => {
 					<h1 className="text-4xl md:text-5xl font-bold">Layanan Kami</h1>
 				</div>
 
-				<div className="grid grid-cols-4 gap-4 mt-10">
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 px-6 md:px-0">
 					<Card className="rounded-md">
 						<div className="flex flex-col items-center justify-center  w-full h-[300px] gap-2 p-4 text-center">
 							<LuChefHat className="text-5xl text-headingText" />

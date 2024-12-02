@@ -11,7 +11,7 @@ const Kontak = () => {
 					<h1 className="text-4xl md:text-5xl font-bold">Kontak</h1>
 				</div>
 
-				<div className="flex flex-row rounded-md gap-10 mt-10">
+				<div className="flex flex-col md:flex-row rounded-md gap-10 mt-10 mx-6 md:mx-0">
 					<div className="w-full h-[500px] rounded-md">
 						<iframe
 							src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d247.5615590397541!2d107.62489733976216!3d-6.892403705778532!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e7ac64fa5355%3A0xc1d2a77afa6a46e7!2sBakso%20Dono%20Reborn!5e0!3m2!1sen!2sid!4v1727161612587!5m2!1sen!2sid"

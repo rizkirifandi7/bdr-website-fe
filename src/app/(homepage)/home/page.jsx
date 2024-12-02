@@ -1,5 +1,5 @@
-import Feedback from "@/components/homepage/Feedback";
 import Jumbotron from "@/components/homepage/Jumbotron";
+import Kontak from "@/components/homepage/Kontak";
 import Layanan from "@/components/homepage/Layanan";
 import MenuPopuler from "@/components/homepage/MenuPopuler";
 import Reservasi from "@/components/homepage/Reservasi";
@@ -13,7 +13,7 @@ const Home = () => {
 			<Layanan />
 			<Tentang />
 			<Reservasi />
-			<Feedback />
+			<Kontak />
 		</>
 	);
 };

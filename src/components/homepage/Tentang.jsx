@@ -8,8 +8,8 @@ const Tentang = () => {
 	return (
 		<section className="min-h-[80vh] pt-40" id="tentang">
 			<div className="max-w-screen-xl mx-auto">
-				<div className="flex flex-col-reverse md:flex-row md:justify-between items-center p-4">
-					<div className="grid grid-cols-2 gap-4 w-1/2">
+				<div className="flex gap-4 md:gap-0 flex-col-reverse md:flex-row md:justify-between items-center p-4">
+					<div className="grid grid-cols-2 gap-4 md:w-1/2 mt-4 md:mt-0">
 						<div className="">
 							<Image
 								src={Tentang3}
@@ -39,7 +39,7 @@ const Tentang = () => {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col w-1/2">
+					<div className="flex flex-col md:w-1/2">
 						<p className="text-xl font-medium text-headingText font-custom">
 							Tentang Kami
 						</p>

@@ -82,8 +82,8 @@ const Reservasi = () => {
 	return (
 		<section className="min-h-[80vh] pt-40" id="reservasi">
 			<div className="max-w-screen-xl mx-auto">
-				<div className="flex flex-row bg-[#0F172B] rounded-md">
-					<div className="w-full h-[600px] py-10 pl-10">
+				<div className="flex flex-col md:flex-row bg-[#0F172B] rounded-md mx-6 md:mx-0">
+					<div className="w-full h-[600px] py-10 md:pl-10 px-6 md:px-0">
 						<iframe
 							className="rounded-md"
 							width="100%"
@@ -98,7 +98,7 @@ const Reservasi = () => {
 					<div className="flex flex-col justify-center p-10 w-full h-[600px] ">
 						<p className="text-lg font-custom text-headingText">Reservasi</p>
 						<h1 className="text-[2.5rem] font-bold text-white">
-							Reservasi Tempat
+							Reservasi Tempat	
 						</h1>
 						<form onSubmit={handleSubmit}>
 							<div className="flex flex-col w-full gap-4 mt-4">

@@ -13,6 +13,16 @@ const Navbar = () => {
 		setIsOpen(!isOpen);
 	};
 
+	const NavMenu = [
+		{ title: "Beranda", url: "home" },
+		{ title: "Menu", url: "menu" },
+		{ title: "Layanan", url: "layanan" },
+		{ title: "Tentang", url: "tentang" },
+		{ title: "Reservasi", url: "reservasi" },
+		{ title: "Kontak", url: "kontak" },
+		{ title: "Feedback", url: "feedback" },
+	];
+
 	return (
 		<nav className="bg-[#0F172B] fixed w-full z-50">
 			<div className="max-w-screen-xl mx-auto w-full">
@@ -35,36 +45,13 @@ const Navbar = () => {
 						className={`md:block ${isOpen ? "block" : "hidden"} mt-4 md:mt-0`}
 					>
 						<ul className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 uppercase font-bold text-lg text-white">
-							<li>
-								<Link href="home" className="text-sm">
-									Beranda
-								</Link>
-							</li>
-							<li>
-								<Link href="menu" className="text-sm">
-									Menu
-								</Link>
-							</li>
-							<li>
-								<Link href="layanan" className="text-sm">
-									Layanan
-								</Link>
-							</li>
-							<li>
-								<Link href="tentang" className="text-sm">
-									Tentang
-								</Link>
-							</li>
-							<li>
-								<Link href="reservasi" className="text-sm">
-									Reservasi
-								</Link>
-							</li>
-							<li>
-								<Link href="kontak" className="text-sm">
-									Kontak
-								</Link>
-							</li>
+							{NavMenu.map((menu, index) => (
+								<li key={index}>
+									<a href={menu.url} className="text-sm">
+										{menu.title}
+									</a>
+								</li>
+							))}
 						</ul>
 					</div>
 				</div>

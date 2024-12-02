@@ -54,7 +54,9 @@ const MenuPage = () => {
 					<div className="mt-10">
 						<div className="flex items-center">
 							<h1 className="font-semibold text-2xl w-[250px]">
-								Menu Mie Ayam
+								{selectedCategory
+									? selectedCategory.nama_kategori
+									: "Semua Menu"}
 							</h1>
 							<hr className="w-full" />
 						</div>
