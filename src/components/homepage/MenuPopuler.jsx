@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
 	Carousel,
@@ -15,45 +15,23 @@ import Autoplay from "embla-carousel-autoplay";
 const MenuPopuler = () => {
 	const [menuItems, setMenuItems] = useState([]);
 
-	useEffect(() => {
-		const fetchMenuItems = async () => {
-			try {
-				const response = await fetch(
-					`${process.env.NEXT_PUBLIC_API_URL}/pesanan`
-				);
-				const data = await response.json();
-				if (data.status) {
-					const menuCount = {};
-
-					// Count the number of times each menu item is ordered
-					data.data.forEach((order) => {
-						order.item_pesanan.forEach((item) => {
-							const menuId = item.menu.id;
-							if (menuCount[menuId]) {
-								menuCount[menuId].count += item.jumlah;
-							} else {
-								menuCount[menuId] = {
-									...item.menu,
-									count: item.jumlah,
-								};
-							}
-						});
-					});
-
-					// Convert the menuCount object to an array and sort by count
-					const sortedMenuItems = Object.values(menuCount).sort(
-						(a, b) => b.count - a.count
-					);
-
-					setMenuItems(sortedMenuItems);
-				}
-			} catch (error) {
-				console.error("Error fetching menu items:", error);
-			}
-		};
-
-		fetchMenuItems();
+	const fetchMenuItems = useCallback(async () => {
+		try {
+			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/menu`);
+			const data = await response.json();
+			setMenuItems(data.data);
+		} catch (error) {
+			console.error("Error fetching menu items:", error);
+		}
 	}, []);
+
+	useEffect(() => {
+		fetchMenuItems();
+	}, [fetchMenuItems]);
+
+	const filterMenuPopuler = useMemo(() => {
+		return menuItems.filter((menu) => menu.ispopuler === "populer");
+	}, [menuItems]);
 
 	return (
 		<section className="min-h-[80vh] pt-40" id="menu">
@@ -71,7 +49,7 @@ const MenuPopuler = () => {
 					]}
 				>
 					<CarouselContent className="-ml-1">
-						{menuItems.map((item) => (
+						{filterMenuPopuler.map((item) => (
 							<CarouselItem key={item.id} className="md:basis-1/2 lg:basis-1/3">
 								<div className="p-2">
 									<Card className="rounded-md ">
@@ -93,7 +71,7 @@ const MenuPopuler = () => {
 													</h4>
 												</div>
 												<p className="text-pretty text-gray-400 text-base mt-2 text-center">
-													{item.kategori.nama_kategori}
+													{item.kategori}
 												</p>
 											</div>
 										</CardContent>

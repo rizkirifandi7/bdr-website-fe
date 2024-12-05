@@ -23,7 +23,13 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { formatDateToISO } from "@/lib/formatDate";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,6 +46,8 @@ const FormSchema = z.object({
 	kontak: z.string().nonempty("Kontak harus diisi."),
 	tanggal_reservasi: z.any(),
 	jumlah_orang: z.any(),
+	catatan: z.string(),
+	ruangan: z.string(),
 });
 
 const TambahJadwal = ({ fetchJadwalData }) => {
@@ -52,6 +60,8 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 			kontak: "",
 			tanggal_reservasi: null,
 			jumlah_orang: 1,
+			catatan: "",
+			ruangan: "",
 		},
 	});
 
@@ -62,6 +72,8 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 				kontak: data.kontak,
 				tanggal_reservasi: data.tanggal_reservasi.toISOString(),
 				jumlah_orang: data.jumlah_orang,
+				catatan: data.catatan,
+				ruangan: data.ruangan,
 			};
 
 			const response = await axios.post(
@@ -94,7 +106,7 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 					Tambah Reservasi
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="max-w-[350px]">
+			<DialogContent className="max-w-[450px]">
 				<DialogHeader className="text-start">
 					<DialogTitle>Tambah Reservasi</DialogTitle>
 					<DialogDescription>Tambah reservasi baru.</DialogDescription>
@@ -232,8 +244,15 @@ const TambahJadwal = ({ fetchJadwalData }) => {
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												<SelectItem value="lantai 1">lantai 1</SelectItem>
-												<SelectItem value="Outdoor">Outdoor</SelectItem>
+												<SelectItem value="Lantai 1 Family Place">
+													Lantai 1 Family Place
+												</SelectItem>
+												<SelectItem value="Lantai 2 Karaoke">
+													Lantai 2 Karaoke
+												</SelectItem>
+												<SelectItem value="Lantai 3 Rooftop">
+													Lantai 3 Rooftop
+												</SelectItem>
 											</SelectContent>
 										</Select>
 									</FormControl>

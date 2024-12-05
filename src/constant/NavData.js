@@ -65,6 +65,11 @@ export const HomeNavData = {
 				},
 				{ title: "Menu", url: "/dashboard-home/menu", icon: <BiFoodMenu /> },
 				{
+					title: "Menu Populer",
+					url: "/dashboard-home/menu-populer",
+					icon: <BiFoodMenu />,
+				},
+				{
 					title: "Feedback",
 					url: "/dashboard-home/feedback",
 					icon: <MdOutlineSpaceDashboard />,

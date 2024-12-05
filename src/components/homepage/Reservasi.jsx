@@ -68,6 +68,7 @@ const Reservasi = () => {
 
 		if (response.status === 201) {
 			toast.success("Reservasi berhasil dibuat.");
+			sendWhatsAppMessage(reservationData);
 			setRuangan("");
 			setName("");
 			setPhone("");
@@ -77,6 +78,15 @@ const Reservasi = () => {
 		} else {
 			toast.error("Reservasi gagal dibuat.");
 		}
+	};
+
+	const sendWhatsAppMessage = (reservationData) => {
+		const message = `Reservasi baru:\nNama: ${reservationData.nama_pelanggan}\nKontak: ${reservationData.kontak}\nTanggal: ${reservationData.tanggal_reservasi}\nJumlah Orang: ${reservationData.jumlah_orang}\nCatatan: ${reservationData.catatan}\nRuangan: ${reservationData.ruangan}`;
+		const phoneNumber = "0895609977877";
+		const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+			message
+		)}`;
+		window.open(whatsappUrl, "_blank");
 	};
 
 	return (
@@ -98,7 +108,7 @@ const Reservasi = () => {
 					<div className="flex flex-col justify-center p-10 w-full h-[600px] ">
 						<p className="text-lg font-custom text-headingText">Reservasi</p>
 						<h1 className="text-[2.5rem] font-bold text-white">
-							Reservasi Tempat	
+							Reservasi Tempat
 						</h1>
 						<form onSubmit={handleSubmit}>
 							<div className="flex flex-col w-full gap-4 mt-4">
@@ -162,8 +172,12 @@ const Reservasi = () => {
 											<SelectItem value="Lantai 1 Family Place">
 												Lantai 1 Family Place
 											</SelectItem>
-											<SelectItem value="Lantai 2 Karaoke">Lantai 2 Karaoke</SelectItem>
-											<SelectItem value="Lantai 3 Rooftop">Lantai 3 Rooftop</SelectItem>
+											<SelectItem value="Lantai 2 Karaoke">
+												Lantai 2 Karaoke
+											</SelectItem>
+											<SelectItem value="Lantai 3 Rooftop">
+												Lantai 3 Rooftop
+											</SelectItem>
 										</SelectGroup>
 									</SelectContent>
 								</Select>

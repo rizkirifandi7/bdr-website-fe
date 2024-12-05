@@ -26,9 +26,9 @@ import {
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
-import { PlusCircle } from "lucide-react";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { MdOutlineEdit } from "react-icons/md";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -38,9 +38,10 @@ const FormSchema = z.object({
 	gambar: z.any(),
 	nama_kategori: z.any(),
 	harga: z.any(),
+	ispopuler: z.any(),
 });
 
-const TambahMenu = ({ fetchDataMenu }) => {
+const UpdateMenu = ({ fetchDataMenu, id, rowData }) => {
 	const [openTambah, setOpenTambah] = useState(false);
 	const [dataKategori, setDataKategori] = useState([]);
 
@@ -57,15 +58,16 @@ const TambahMenu = ({ fetchDataMenu }) => {
 	const form = useForm({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
-			nama_menu: "",
-			deskripsi: "",
-			gambar: "",
-			nama_kategori: "",
-			harga: "",
+			nama_menu: rowData.nama_menu,
+			deskripsi: rowData.deskripsi,
+			gambar: rowData.gambar,
+			nama_kategori: rowData.kategori,
+			harga: rowData.harga,
+			ispopuler: rowData.ispopuler,
 		},
 	});
 
-	const handleTambah = async (data) => {
+	const handleUpdate = async (data) => {
 		try {
 			const formData = new FormData();
 			formData.append("nama_menu", data.nama_menu);
@@ -73,14 +75,18 @@ const TambahMenu = ({ fetchDataMenu }) => {
 			formData.append("gambar", data.gambar[0]);
 			formData.append("nama_kategori", data.nama_kategori);
 			formData.append("harga", data.harga);
+			formData.append("ispopuler", data.ispopuler);
 
-			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/menu`, {
-				method: "POST",
-				body: formData,
-			});
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/menu/${id}`,
+				{
+					method: "PUT",
+					body: formData,
+				}
+			);
 
-			if (response.status === 201) {
-				toast.success("Menu berhasil ditambahkan");
+			if (response.status === 200) {
+				toast.success("Menu berhasil diupdate");
 				form.reset();
 				setOpenTambah(false);
 				fetchDataMenu();
@@ -94,19 +100,18 @@ const TambahMenu = ({ fetchDataMenu }) => {
 	return (
 		<Dialog open={openTambah} onOpenChange={setOpenTambah}>
 			<DialogTrigger asChild>
-				<Button>
-					<PlusCircle />
-					Tambah Menu
+				<Button variant="outline" size="icon">
+					<MdOutlineEdit />
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Tambah Menu</DialogTitle>
-					<DialogDescription>Tambahkan menu baru.</DialogDescription>
+					<DialogTitle>Update Menu</DialogTitle>
+					<DialogDescription>Update menu baru.</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(handleTambah)}
+						onSubmit={form.handleSubmit(handleUpdate)}
 						className="space-y-4"
 					>
 						<FormField
@@ -198,6 +203,34 @@ const TambahMenu = ({ fetchDataMenu }) => {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name="ispopuler"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Kategori</FormLabel>
+									<FormControl>
+										<Select
+											onValueChange={field.onChange}
+											defaultValue={field.value}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Menu Populer" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												<SelectItem value="populer">Populer</SelectItem>
+												<SelectItem value="tidak populer">
+													Tidak populer
+												</SelectItem>
+											</SelectContent>
+										</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<div className="space-y-2">
 							<Label className="">Gambar</Label>
 							<Input
@@ -218,4 +251,4 @@ const TambahMenu = ({ fetchDataMenu }) => {
 	);
 };
 
-export default TambahMenu;
+export default UpdateMenu;

@@ -26,8 +26,7 @@ import {
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
-import { PlusCircle } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { MdOutlineEdit } from "react-icons/md";
 import { toast } from "sonner";
@@ -45,20 +44,15 @@ const UpdateMenu = ({ fetchDataMenu, id, rowData }) => {
 	const [openTambah, setOpenTambah] = useState(false);
 	const [dataKategori, setDataKategori] = useState([]);
 
-	useEffect(() => {
-		const fetchDataKategori = async () => {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/kategori`,
-				{
-					cache: "force-cache",
-				}
-			);
-			const data = await response.json();
-			setDataKategori(data.data);
-		};
-
-		fetchDataKategori();
+	const fetchDataKategori = useCallback(async () => {
+		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/kategori`);
+		const data = await response.json();
+		setDataKategori(data.data);
 	}, []);
+
+	useEffect(() => {
+		fetchDataKategori();
+	}, [fetchDataKategori]);
 
 	const form = useForm({
 		resolver: zodResolver(FormSchema),

@@ -12,7 +12,7 @@ import UpdateMenu from "./components/UpdateMenu";
 import HapusMenu from "./components/HapusMenu";
 import TableView from "@/components/TableView";
 
-const PageMenu = () => {
+const PageMenuPopuler = () => {
 	const [data, setData] = React.useState([]);
 	const [loading, setLoading] = React.useState(false);
 	const [error, setError] = React.useState(null);
@@ -39,20 +39,18 @@ const PageMenu = () => {
 	const columns = React.useMemo(
 		() => [
 			{
+				accessorKey: "ispopuler",
+				header: "Populer Menu",
+				cell: ({ row }) => (
+					<div className="capitalize">{row.getValue("ispopuler")}</div>
+				),
+			},
+			{
 				accessorKey: "nama_menu",
 				header: "Nama Menu",
 				cell: ({ row }) => (
 					<div className="capitalize w-[200px] overflow-x-auto">
 						{row.getValue("nama_menu")}
-					</div>
-				),
-			},
-			{
-				accessorKey: "deskripsi",
-				header: "deskripsi",
-				cell: ({ row }) => (
-					<div className="capitalize w-[200px] overflow-x-auto">
-						{row.getValue("deskripsi")}
 					</div>
 				),
 			},
@@ -98,20 +96,6 @@ const PageMenu = () => {
 				),
 			},
 			{
-				accessorKey: "harga",
-				header: () => <div className="">Harga</div>,
-				cell: ({ row }) => {
-					const harga = parseFloat(row.getValue("harga"));
-
-					const formatted = new Intl.NumberFormat("id-ID", {
-						style: "currency",
-						currency: "IDR",
-					}).format(harga);
-
-					return <div className="font-medium">{formatted}</div>;
-				},
-			},
-			{
 				id: "actions",
 				enableHiding: false,
 				cell: ({ row }) => {
@@ -124,7 +108,7 @@ const PageMenu = () => {
 								id={id}
 								rowData={rowData}
 							/>
-							<HapusMenu id={id} fetchDataMenu={fetchDataMenu} />
+							{/* <HapusMenu id={id} fetchDataMenu={fetchDataMenu} /> */}
 						</div>
 					);
 				},
@@ -142,7 +126,7 @@ const PageMenu = () => {
 					columns={columns}
 					data={data}
 					TambahComponent={() => <TambahMenu fetchDataMenu={fetchDataMenu} />}
-					title="Dashboard Menu"
+					title="Dashboard Menu Populer"
 					search="nama_menu"
 					pageSize={5}
 				/>
@@ -151,4 +135,4 @@ const PageMenu = () => {
 	);
 };
 
-export default PageMenu;
+export default PageMenuPopuler;
