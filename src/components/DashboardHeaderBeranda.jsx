@@ -16,16 +16,20 @@ import { LogOut } from "lucide-react";
 import { Logout } from "@/services/api/auth";
 import { removeCookie } from "@/actions/cookies";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const SidebarDashboardHeader = () => {
+	const router = useRouter();
 	const [user, setUser] = React.useState(null);
 
 	const handleLogout = async () => {
 		try {
 			const response = await Logout();
 			if (response.status === true) {
+				router.push("/auth/signin");
 				removeCookie("auth_session");
-				window.location.href = "/auth/signin";
 				toast.success("Logout berhasil.");
 			}
 		} catch (error) {

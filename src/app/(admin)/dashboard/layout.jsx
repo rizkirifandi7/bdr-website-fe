@@ -1,20 +1,14 @@
 import React from "react";
-import {
-	SidebarInset,
-	SidebarProvider,
-	SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import SidebarDashboard from "@/components/SidebarDashboard";
-import {
-	MdEventNote,
-	MdOutlineFeedback,
-	MdOutlineNoteAlt,
-	MdOutlineSpaceDashboard,
-} from "react-icons/md";
+import { MdOutlineNoteAlt, MdOutlineSpaceDashboard } from "react-icons/md";
 import { BiFoodMenu } from "react-icons/bi";
 import { LuMenuSquare } from "react-icons/lu";
 import DashboardHeaderOrder from "@/components/DashboardHeaderOrder";
 import { Toaster } from "sonner";
+import { User } from "lucide-react";
+import { LuChefHat } from "react-icons/lu";
+import { OrderNavData } from "@/constant/NavData";
 
 export const metadata = {
 	title: "Dashboard | Bakso Dono Reborn",
@@ -51,6 +45,22 @@ const data = {
 					title: "Pesanan",
 					url: "/dashboard/pesanan",
 					icon: <MdOutlineNoteAlt />,
+				},
+				{
+					title: "Manajemen Pesanan",
+					url: "/dashboard/kitchen-list",
+					icon: <LuChefHat />,
+				},
+			],
+		},
+		{
+			title: "Kelola User",
+			url: "#",
+			items: [
+				{
+					title: "User",
+					url: "/dashboard/user",
+					icon: <User />,
 				},
 			],
 		},

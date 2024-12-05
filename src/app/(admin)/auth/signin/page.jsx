@@ -19,16 +19,14 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import LogoBDR from "@/assets/logobdr.png";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
-import Cookies from "js-cookie";
 import { useState } from "react";
+import { setCookie } from "@/actions/cookies";
 
 const FormSchema = z.object({
 	email: z
@@ -71,10 +69,17 @@ const PageLogin = () => {
 				}
 			);
 
-			if (response.data.status === true) {
-				Cookies.set("auth_session", response.data.data.token);
+			if (
+				response.data.role === "admin" ||
+				response.data.role === "pegawai" 
+			) {
+				setCookie("auth_session", response.data.data.token);
 				toast.success("Login berhasil.");
 				router.push("/dashboard/home");
+			} else if (response.data.role === "adminhome") {
+				setCookie("auth_session", response.data.data.token);
+				toast.success("Login berhasil.");
+				router.push("/dashboard-home/menu");
 			}
 		} catch (error) {
 			toast.error("Email atau password salah.");
@@ -88,8 +93,8 @@ const PageLogin = () => {
 			<div className="flex justify-center items-center w-full h-full bg-white">
 				<Card className="w-[450px]">
 					<CardHeader>
-						<div className="flex flex-col justify-center items-center my-8 gap-2">
-							<Image src={LogoBDR} alt="" className="w-20" />
+						<div className="flex flex-col justify-center items-center my-8 gap-2 ">
+							<Image src="/logobdr.png" width={80} height={80} alt="" />
 							<p className="text-base font-bold">Bakso Dono Reborn</p>
 						</div>
 						<CardTitle className="text-2xl">Login</CardTitle>

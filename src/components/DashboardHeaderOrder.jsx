@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -23,7 +23,7 @@ import { removeCookie } from "@/actions/cookies";
 import { useRouter } from "next/navigation";
 
 const DashboardHeaderOrder = () => {
-  const router = useRouter();
+	const router = useRouter();
 	const [user, setUser] = React.useState(null);
 	const { token, notifications } = useFcmToken();
 

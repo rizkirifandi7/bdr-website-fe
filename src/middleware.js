@@ -15,6 +15,10 @@ export async function middleware(request) {
 		return NextResponse.rewrite(new URL("/auth/signin", request.url));
 	}
 
+	if (!token && pathname.startsWith("/dashboard-home")) {
+		return NextResponse.rewrite(new URL("/auth/signin", request.url));
+	}
+
 	if (!typeOrder && pathname.startsWith("/order")) {
 		return NextResponse.rewrite(new URL("/order/tipeorder", request.url));
 	}
@@ -23,5 +27,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-	matcher: ["/dashboard/:path*", "/order/:path*"],
+	matcher: ["/dashboard/:path*", "/order/:path*", "/dashboard-home/:path*"],
 };

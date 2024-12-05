@@ -9,14 +9,15 @@ import { useRouter } from "next/navigation";
 import { generateCodePayment } from "@/lib/generateId";
 import axios from "axios";
 import useFcmToken from "@/hooks/useFcmToken";
-import { Textarea } from "@/components/ui/textarea";
 
 import OrderType from "./components/OrderType";
 import OrderSummary from "./components/OrderSummary";
 import OrderItem from "./components/OrderItem";
 import OrderCustomerAndDate from "./components/OrderCustomerAndDate";
 import ButtonOrder from "./components/ButtonOrder";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import OrderPaymentMethod from "./components/OrderPaymentMethod";
+import OrderNotes from "./components/OrderNotes";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 const PageCheckout = () => {
 	const router = useRouter();
@@ -29,28 +30,22 @@ const PageCheckout = () => {
 		setName,
 		name,
 	} = useCart();
-	const [codePayment, setCodePayment] = useState(null);
+	const [codePayment, setCodePayment] = useState(generateCodePayment());
 	const [note, setNote] = useState("");
 	const [tipePayment, setTipePayment] = useState("Cash");
+	const [isLoading, setIsLoading] = useState(false);
 	const { token } = useFcmToken();
-
-	useEffect(() => {
-		const paymentCode = generateCodePayment();
-		setCodePayment(paymentCode);
-	}, []);
 
 	const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 	const totalPrice = getTotalPrice();
-	const itemsToOrder = cart.map((item) => ({
-		id_menu: item.id,
-		quantity: item.quantity,
-		harga: item.harga,
-		nama: item.nama_menu,
+	const itemsToOrder = cart.map(({ id, quantity, harga, nama_menu }) => ({
+		id_menu: id,
+		quantity,
+		harga,
+		nama: nama_menu,
 	}));
 
-	const handlePaymentChange = (value) => {
-		setTipePayment(value);
-	};
+	const handlePaymentChange = (value) => setTipePayment(value);
 
 	const handlePayment = async () => {
 		const response = await axios.post(
@@ -91,7 +86,14 @@ const PageCheckout = () => {
 	};
 
 	const handlePlaceOrder = async () => {
-		await handlePayment();
+		setIsLoading(true);
+		try {
+			await handlePayment();
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -105,59 +107,26 @@ const PageCheckout = () => {
 					<div className=""></div>
 				</div>
 
-				<OrderType typeOrder={typeOrder} />
-
-				<OrderCustomerAndDate name={name} />
-
-				<OrderItem cart={cart} totalQuantity={totalQuantity} />
-
-				<div className="bg-white m-4">
-					<div className="p-4 border rounded-lg">
-						<Textarea
-							value={note}
-							onChange={(e) => setNote(e.target.value)}
-							className="w-full h-[100px] p-2 border rounded"
-							placeholder="Catatan..."
+				{isLoading ? (
+					<LoadingSpinner />
+				) : (
+					<>
+						<OrderType typeOrder={typeOrder} />
+						<OrderCustomerAndDate name={name} />
+						<OrderItem cart={cart} totalQuantity={totalQuantity} />
+						<OrderNotes note={note} setNote={setNote} />
+						<OrderPaymentMethod
+							tipePayment={tipePayment}
+							handlePaymentChange={handlePaymentChange}
 						/>
-					</div>
-				</div>
-
-				<div className="bg-white m-4">
-					<div className="p-4 border rounded-lg">
-						<h1 className="font-semibold text-base mb-2">Payment Method</h1>
-						<RadioGroup value={tipePayment} onValueChange={handlePaymentChange}>
-							<div className="flex justify-between items-center hover:bg-slate-100 rounded-lg py-0.5 w-full">
-								<label
-									htmlFor="r1"
-									className="flex justify-between items-center w-full cursor-pointer"
-								>
-									<span className="text-base">Cash</span>
-									<RadioGroupItem value="cash" id="r1" className="w-6 h-6" />
-								</label>
-							</div>
-							<div className="flex justify-between items-center hover:bg-slate-100 rounded-lg py-0.5 w-full">
-								<label
-									htmlFor="r2"
-									className="flex justify-between items-center w-full cursor-pointer"
-								>
-									<span className="text-base">Transfer</span>
-									<RadioGroupItem
-										value="transfer"
-										id="r2"
-										className="w-6 h-6"
-									/>
-								</label>
-							</div>
-						</RadioGroup>
-					</div>
-				</div>
-
-				<OrderSummary
-					totalPrice={totalPrice}
-					tax={0}
-					total={totalPrice}
-					discount={0}
-				/>
+						<OrderSummary
+							totalPrice={totalPrice}
+							tax={0}
+							total={totalPrice}
+							discount={0}
+						/>
+					</>
+				)}
 			</div>
 
 			<ButtonOrder

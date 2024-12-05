@@ -244,9 +244,9 @@ const PageReservasi = () => {
 											</DialogTrigger>
 											<DialogContent>
 												<DialogTitle>Detail Reservasi</DialogTitle>
-												<div className="flex flex-col gap-8">
+												<div className="flex flex-col space-y-5 mt-4">
 													<div className="flex flex-col gap-1">
-														<Label className="text-slate-600 text-base mb-1">
+														<Label className="text-slate-600 text-sm mb-1">
 															Nama Pelanggan
 														</Label>
 														<p className="text-lg font-medium border  p-2 rounded-md">
@@ -254,7 +254,7 @@ const PageReservasi = () => {
 														</p>
 													</div>
 													<div className="flex flex-col gap-1 w-[460px]">
-														<Label className="text-slate-600 text-base mb-1">
+														<Label className="text-slate-600 text-sm mb-1">
 															Kontak
 														</Label>
 														<p className="text-lg font-medium border p-2 rounded-md break-words">
@@ -262,7 +262,7 @@ const PageReservasi = () => {
 														</p>
 													</div>
 													<div className="flex flex-col gap-1">
-														<Label className="text-slate-600 text-base mb-1">
+														<Label className="text-slate-600 text-sm mb-1">
 															Tanggal Reservasi
 														</Label>
 														<p className="text-lg font-medium border  p-2 rounded-md">
@@ -272,11 +272,27 @@ const PageReservasi = () => {
 														</p>
 													</div>
 													<div className="flex flex-col gap-1">
-														<Label className="text-slate-600 text-base mb-1">
+														<Label className="text-slate-600 text-sm mb-1">
 															Jumlah Orang
 														</Label>
 														<p className="text-lg font-medium border  p-2 rounded-md">
 															{schedule.jumlah_orang}
+														</p>
+													</div>
+													<div className="flex flex-col gap-1">
+														<Label className="text-slate-600 text-sm mb-1">
+															Ruangan
+														</Label>
+														<p className="text-lg font-medium border  p-2 rounded-md">
+															{schedule.ruangan ? schedule.ruangan : "-"}
+														</p>
+													</div>
+													<div className="flex flex-col gap-1">
+														<Label className="text-slate-600 text-sm mb-1">
+															Catatan
+														</Label>
+														<p className="text-lg font-medium border  p-2 rounded-md">
+															{schedule.catatan}
 														</p>
 													</div>
 												</div>
@@ -301,33 +317,59 @@ const PageReservasi = () => {
 															</DialogTrigger>
 															<DialogContent>
 																<DialogTitle>Detail Reservasi</DialogTitle>
-																<div className="flex flex-col gap-2">
-																	<p>
-																		<span className="font-semibold">
-																			Nama Pelanggan:
-																		</span>{" "}
-																		{schedule.nama_pelanggan}
-																	</p>
-																	<p>
-																		<span className="font-semibold">
-																			Kontak:
-																		</span>{" "}
-																		{schedule.kontak}
-																	</p>
-																	<p>
-																		<span className="font-semibold">
-																			Tanggal Reservasi:
-																		</span>{" "}
-																		{dayjs(schedule.tanggal_reservasi).format(
-																			"DD MMMM YYYY"
-																		)}
-																	</p>
-																	<p>
-																		<span className="font-semibold">
-																			Jumlah Orang:
-																		</span>{" "}
-																		{schedule.jumlah_orang}
-																	</p>
+																<div className="flex flex-col space-y-5">
+																	<div className="flex flex-col gap-1">
+																		<Label className="text-slate-600 text-sm mb-1">
+																			Nama Pelanggan
+																		</Label>
+																		<p className="text-lg font-medium border  p-2 rounded-md">
+																			{schedule.nama_pelanggan}
+																		</p>
+																	</div>
+																	<div className="flex flex-col gap-1 w-[460px]">
+																		<Label className="text-slate-600 text-sm mb-1">
+																			Kontak
+																		</Label>
+																		<p className="text-lg font-medium border p-2 rounded-md break-words">
+																			{schedule.kontak}
+																		</p>
+																	</div>
+																	<div className="flex flex-col gap-1">
+																		<Label className="text-slate-600 text-sm mb-1">
+																			Tanggal Reservasi
+																		</Label>
+																		<p className="text-lg font-medium border  p-2 rounded-md">
+																			{dayjs(schedule.tanggal_reservasi).format(
+																				"DD MMMM YYYY"
+																			)}
+																		</p>
+																	</div>
+																	<div className="flex flex-col gap-1">
+																		<Label className="text-slate-600 text-sm mb-1">
+																			Jumlah Orang
+																		</Label>
+																		<p className="text-lg font-medium border  p-2 rounded-md">
+																			{schedule.jumlah_orang}
+																		</p>
+																	</div>
+																	<div className="flex flex-col gap-1">
+																		<Label className="text-slate-600 text-sm mb-1">
+																			Ruangan
+																		</Label>
+																		<p className="text-lg font-medium border  p-2 rounded-md">
+																			{schedule.ruangan
+																				? schedule.ruangan
+																				: "-"}
+																		</p>
+																	</div>
+																	<div className="flex flex-col gap-1">
+																		<Label className="text-slate-600 text-sm mb-1">
+																			Catatan
+																		</Label>
+																		<p className="text-lg font-medium border  p-2 rounded-md">
+																			{schedule.catatan}
+																		</p>
+																	</div>
 																</div>
 															</DialogContent>
 														</Dialog>

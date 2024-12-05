@@ -1,33 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-
-import { Button } from "@/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import TableView from "@/components/TableView";
 import axios from "axios";
 import HapusFeedback from "./components/HapusFeedback";
+import { toast } from "sonner";
 
 const PageFeedback = () => {
 	const [dataUser, setDataUser] = React.useState([]);
 
 	const columns = [
-		{
-			accessorKey: "nama_pelanggan",
-			header: "Nama",
-			cell: ({ row }) => (
-				(<div className="capitalize">{row.getValue("nama_pelanggan")}</div>)
-			),
-		},
 		{
 			accessorKey: "rating",
 			header: "Rating",

@@ -7,76 +7,55 @@ import { formatRupiah } from "@/lib/formatRupiah";
 import DashboardCard from "./components/DashboardCard";
 
 const PageHomeDashboard = () => {
-	const [infoDataPesanan, setInfoDataPesanan] = React.useState([]);
-	const [reservasiData, setReservasiData] = React.useState([]);
+	const [data, setData] = React.useState({
+		infoDataPesanan: [],
+		menuData: [],
+	});
 	const [percentageChange, setPercentageChange] = React.useState({
 		orders: 0,
 		revenue: 0,
 		activeTables: 0,
 	});
+	const [loading, setLoading] = React.useState(true);
+	const [error, setError] = React.useState(null);
 
 	const calculatePercentageChange = React.useCallback((data) => {
 		const currentMonth = new Date().getMonth();
 		const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
 
-		const currentMonthData = data.filter(
-			(order) => new Date(order.order_time).getMonth() === currentMonth
-		);
-		const previousMonthData = data.filter(
-			(order) => new Date(order.order_time).getMonth() === previousMonth
-		);
+		const getMonthlyData = (month) =>
+			data.filter((order) => new Date(order.order_time).getMonth() === month);
 
-		const currentMonthOrders = currentMonthData.length;
-		const previousMonthOrders = previousMonthData.length;
+		const currentMonthData = getMonthlyData(currentMonth);
+		const previousMonthData = getMonthlyData(previousMonth);
 
-		const currentMonthRevenue = currentMonthData.reduce(
-			(acc, order) => acc + order.total,
-			0
-		);
-		const previousMonthRevenue = previousMonthData.reduce(
-			(acc, order) => acc + order.total,
-			0
-		);
-
-		const currentMonthActiveTables = new Set(
-			currentMonthData.map((order) => order.id_meja)
-		).size;
-		const previousMonthActiveTables = new Set(
-			previousMonthData.map((order) => order.id_meja)
-		).size;
+		const calculateChange = (current, previous) =>
+			previous === 0 ? 0 : ((current - previous) / previous) * 100;
 
 		setPercentageChange({
-			orders:
-				((currentMonthOrders - previousMonthOrders) / previousMonthOrders) *
-				100,
-			revenue:
-				((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) *
-				100,
-			activeTables:
-				((currentMonthActiveTables - previousMonthActiveTables) /
-					previousMonthActiveTables) *
-				100,
+			orders: calculateChange(
+				currentMonthData.length,
+				previousMonthData.length
+			),
+			revenue: calculateChange(
+				currentMonthData.reduce((acc, order) => acc + order.total, 0),
+				previousMonthData.reduce((acc, order) => acc + order.total, 0)
+			),
+			activeTables: calculateChange(
+				new Set(currentMonthData.map((order) => order.id_meja)).size,
+				new Set(previousMonthData.map((order) => order.id_meja)).size
+			),
 		});
 	}, []);
 
-	const menuCounts = React.useMemo(() => {
-		const counts = {};
-		infoDataPesanan.forEach((order) => {
-			order.item_pesanan.forEach((item) => {
-				const menuName = item.menu.nama_menu;
-				counts[menuName] = (counts[menuName] || 0) + item.jumlah;
-			});
-		});
-		return counts;
-	}, [infoDataPesanan]);
-
-	const totalRevenue = React.useMemo(() => {
-		return infoDataPesanan.reduce((acc, order) => acc + order.total, 0);
-	}, [infoDataPesanan]);
+	const totalRevenue = React.useMemo(
+		() => data.infoDataPesanan.reduce((acc, order) => acc + order.total, 0),
+		[data.infoDataPesanan]
+	);
 
 	const totalRevenueToday = React.useMemo(() => {
 		const today = new Date();
-		return infoDataPesanan
+		return data.infoDataPesanan
 			.filter((order) => {
 				const orderDate = new Date(order.order_time);
 				return (
@@ -86,31 +65,43 @@ const PageHomeDashboard = () => {
 				);
 			})
 			.reduce((acc, order) => acc + order.total, 0);
-	}, [infoDataPesanan]);
+	}, [data.infoDataPesanan]);
 
-	const totalReservations = reservasiData.length;
+	const totalReservations = data.menuData.length;
 
 	React.useEffect(() => {
 		const fetchData = async () => {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/pesanan`
-			);
-			const data = await response.json();
-			setInfoDataPesanan(data.data);
-			calculatePercentageChange(data.data);
-		};
+			try {
+				const [pesananResponse, menuResponse] = await Promise.all([
+					fetch(`${process.env.NEXT_PUBLIC_API_URL}/pesanan`),
+					fetch(`${process.env.NEXT_PUBLIC_API_URL}/menu`),
+				]);
 
-		const fetchDataReservasi = async () => {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_API_URL}/reservasi`
-			);
-			const data = await response.json();
-			setReservasiData(data.data);
+				const pesananData = await pesananResponse.json();
+				const menuData = await menuResponse.json();
+
+				setData({
+					infoDataPesanan: pesananData.data,
+					menuData: menuData.data,
+				});
+				calculatePercentageChange(pesananData.data);
+			} catch (err) {
+				setError(err.message);
+			} finally {
+				setLoading(false);
+			}
 		};
 
 		fetchData();
-		fetchDataReservasi();
 	}, [calculatePercentageChange]);
+
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
+	if (error) {
+		return <div>Error: {error}</div>;
+	}
 
 	return (
 		<React.Fragment>
@@ -118,7 +109,7 @@ const PageHomeDashboard = () => {
 			<div className="grid auto-rows-min gap-4 md:grid-cols-4">
 				<DashboardCard
 					title="Order"
-					value={infoDataPesanan.length}
+					value={data.infoDataPesanan.length}
 					percentageChange={percentageChange.orders}
 				/>
 				<DashboardCard
@@ -126,15 +117,15 @@ const PageHomeDashboard = () => {
 					value={formatRupiah(totalRevenue)}
 					percentageChange={percentageChange.revenue}
 				/>
-				<DashboardCard title="Reservasi" value={totalReservations} />
+				<DashboardCard title="Menu" value={totalReservations} />
 				<DashboardCard
 					title="Pendapatan Hari Ini"
 					value={formatRupiah(totalRevenueToday)}
 				/>
 			</div>
 			<div className="grid auto-rows-min gap-4 md:grid-cols-2">
-				<ChartInfo orders={infoDataPesanan} />
-				<BarInfo orders={infoDataPesanan} />
+				<ChartInfo orders={data.infoDataPesanan} />
+				<BarInfo orders={data.infoDataPesanan} />
 			</div>
 		</React.Fragment>
 	);

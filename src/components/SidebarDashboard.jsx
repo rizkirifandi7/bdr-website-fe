@@ -9,17 +9,14 @@ import {
 	SidebarGroupContent,
 	SidebarGroupLabel,
 	SidebarHeader,
-	SidebarInset,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarRail,
-	SidebarTrigger,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
-import { LuUser2 } from "react-icons/lu";
-import LogoBDR from "../assets/logobdr.png";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 // const data = {
 // 	navMain: [
@@ -64,7 +61,14 @@ import Link from "next/link";
 // 	],
 // };
 
-const SidebarDashboard = ({ children, data, user }) => {
+const SidebarDashboard = ({ children, data }) => {
+	const tokenUser = Cookies.get("auth_session");
+	const user = tokenUser ? JSON.parse(atob(tokenUser.split(".")[1])) : null;
+
+	const filteredNavMain = data.navMain.filter(
+		(item) => (user && user.role === "admin") || item.title !== "Kelola User"
+	);
+
 	return (
 		<>
 			<Sidebar>
@@ -72,7 +76,7 @@ const SidebarDashboard = ({ children, data, user }) => {
 					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton size="lg">
-								<Image src={LogoBDR} className="w-10 h-10" alt="logo" />
+								<Image src="/logobdr.png" width={40} height={40} alt="logo" />
 								<div className="flex flex-col gap-0.5 leading-none">
 									<span className="font-bold text-sm">Bakso Dono Reborn</span>
 									<span className="">Sistem Informasi</span>
@@ -82,7 +86,7 @@ const SidebarDashboard = ({ children, data, user }) => {
 					</SidebarMenu>
 				</SidebarHeader>
 				<SidebarContent className="px-3">
-					{data.navMain.map((item) => (
+					{filteredNavMain.map((item) => (
 						<SidebarGroup key={item.title}>
 							<SidebarGroupLabel>{item.title}</SidebarGroupLabel>
 							<SidebarGroupContent>
@@ -103,25 +107,6 @@ const SidebarDashboard = ({ children, data, user }) => {
 							</SidebarGroupContent>
 						</SidebarGroup>
 					))}
-					{user && user.role === "admin" && (
-						<SidebarGroup key="User ">
-							<SidebarGroupLabel>User</SidebarGroupLabel>
-							<SidebarGroupContent>
-								<SidebarMenu className="flex flex-col gap-4">
-									<SidebarMenuItem key="User ">
-										<SidebarMenuButton asChild>
-											<Link href="/dashboard/user">
-												<p className="text-2xl">
-													<LuUser2 />
-												</p>
-												<p className="text-base font-medium">User </p>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
-					)}
 				</SidebarContent>
 				<SidebarRail />
 			</Sidebar>

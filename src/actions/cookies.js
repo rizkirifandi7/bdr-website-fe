@@ -3,21 +3,15 @@
 import { cookies } from "next/headers";
 
 const setCookie = async (name, value) => {
-	await cookies().set({
-		name,
-		value,
-		httpOnly: true,
-		path: "/",
-	});
+	(await cookies()).set(name, value, { secure: true });
 };
 
 const getCookie = async (name) => {
-	const cookie = await cookies().get(name);
-	return cookie ? cookie.value : null;
+	return (await cookies()).get(name);
 };
 
 const removeCookie = async (name) => {
-	await cookies().set(name, "");
+	(await cookies()).delete(name);
 };
 
 export { setCookie, removeCookie, getCookie };
