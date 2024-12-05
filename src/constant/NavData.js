@@ -1,26 +1,9 @@
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
-
 const { User } = require("lucide-react");
 const { BiFoodMenu } = require("react-icons/bi");
 const { LuMenuSquare, LuChefHat } = require("react-icons/lu");
 const { MdOutlineSpaceDashboard, MdOutlineNoteAlt } = require("react-icons/md");
 
-const token = Cookies.get("auth_session");
-
-let role = null;
-if (token) {
-	try {
-		const decodedToken = jwtDecode(token);
-		role = decodedToken.role;
-	} catch (error) {
-		console.error("Invalid token:", error);
-	}
-}
-
-console.log({ token });
-
-const OrderNavData = {
+export const OrderNavData = {
 	navMain: [
 		{
 			title: "Kelola Menu",
@@ -49,27 +32,44 @@ const OrderNavData = {
 					icon: <MdOutlineNoteAlt />,
 				},
 				{
-					title: "Kitchen List Pesanan",
+					title: "Manajemen Pesanan",
 					url: "/dashboard/kitchen-list",
 					icon: <LuChefHat />,
+				},
+			],
+		},
+		{
+			title: "Kelola User",
+			url: "#",
+			items: [
+				{
+					title: "User",
+					url: "/dashboard/user",
+					icon: <User />,
 				},
 			],
 		},
 	],
 };
 
-if (role !== "kasir") {
-	OrderNavData.navMain.push({
-		title: "Kelola User",
-		url: "#",
-		items: [
-			{
-				title: "User",
-				url: "/dashboard/user",
-				icon: <User />,
-			},
-		],
-	});
-}
-
-export { OrderNavData };
+export const HomeNavData = {
+	navMain: [
+		{
+			title: "Kelola Dashboard",
+			url: "#",
+			items: [
+				{
+					title: "Reservasi",
+					url: "/dashboard-home/reservasi",
+					icon: <MdOutlineSpaceDashboard />,
+				},
+				{ title: "Menu", url: "/dashboard-home/menu", icon: <BiFoodMenu /> },
+				{
+					title: "Feedback",
+					url: "/dashboard-home/feedback",
+					icon: <MdOutlineSpaceDashboard />,
+				},
+			],
+		},
+	],
+};

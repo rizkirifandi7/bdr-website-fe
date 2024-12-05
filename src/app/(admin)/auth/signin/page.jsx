@@ -69,10 +69,7 @@ const PageLogin = () => {
 				}
 			);
 
-			if (
-				response.data.role === "admin" ||
-				response.data.role === "pegawai" 
-			) {
+			if (response.data.role === "admin" || response.data.role === "pegawai") {
 				setCookie("auth_session", response.data.data.token);
 				toast.success("Login berhasil.");
 				router.push("/dashboard/home");
@@ -80,6 +77,8 @@ const PageLogin = () => {
 				setCookie("auth_session", response.data.data.token);
 				toast.success("Login berhasil.");
 				router.push("/dashboard-home/menu");
+			} else {
+				toast.error("Anda tidak memiliki akses.");
 			}
 		} catch (error) {
 			toast.error("Email atau password salah.");
