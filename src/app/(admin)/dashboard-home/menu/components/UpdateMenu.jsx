@@ -38,6 +38,7 @@ const FormSchema = z.object({
 	gambar: z.any(),
 	nama_kategori: z.any(),
 	harga: z.any(),
+	ispopuler: z.any(),
 });
 
 const UpdateMenu = ({ fetchDataMenu, id, rowData }) => {
@@ -62,6 +63,7 @@ const UpdateMenu = ({ fetchDataMenu, id, rowData }) => {
 			gambar: rowData.gambar,
 			nama_kategori: rowData.kategori,
 			harga: rowData.harga,
+			ispopuler: rowData.ispopuler,
 		},
 	});
 
@@ -73,6 +75,7 @@ const UpdateMenu = ({ fetchDataMenu, id, rowData }) => {
 			formData.append("gambar", data.gambar[0]);
 			formData.append("nama_kategori", data.nama_kategori);
 			formData.append("harga", data.harga);
+			formData.append("ispopuler", data.ispopuler);
 
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/menu/${id}`,
@@ -193,6 +196,34 @@ const UpdateMenu = ({ fetchDataMenu, id, rowData }) => {
 														</SelectItem>
 													);
 												})}
+											</SelectContent>
+										</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="ispopuler"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Kategori</FormLabel>
+									<FormControl>
+										<Select
+											onValueChange={field.onChange}
+											defaultValue={field.value}
+										>
+											<FormControl>
+												<SelectTrigger>
+													<SelectValue placeholder="Menu Populer" />
+												</SelectTrigger>
+											</FormControl>
+											<SelectContent>
+												<SelectItem value="populer">Populer</SelectItem>
+												<SelectItem value="tidak populer">
+													Tidak populer
+												</SelectItem>
 											</SelectContent>
 										</Select>
 									</FormControl>

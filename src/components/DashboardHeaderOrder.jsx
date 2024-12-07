@@ -71,7 +71,7 @@ const DashboardHeaderOrder = () => {
 					<DropdownMenu>
 						<DropdownMenuTrigger>
 							<p className="inline-flex items-center gap-2 px-2 py-1 border rounded-md text-base font-medium capitalize">
-								<span className="text-lg">🔔</span>
+								🔔
 							</p>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent className="w-auto me-5">
@@ -99,7 +99,7 @@ const DashboardHeaderOrder = () => {
 						<Button variant="outline" onClick={handleLogout}>
 							<DropdownMenuItem>
 								<LogOut />
-								<span>Keluar</span>
+								Keluar
 							</DropdownMenuItem>
 						</Button>
 					</DropdownMenuContent>

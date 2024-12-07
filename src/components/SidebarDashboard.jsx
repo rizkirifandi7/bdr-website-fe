@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { Separator } from "@/components/ui/separator";
 import {
 	Sidebar,
 	SidebarContent,
@@ -9,6 +8,7 @@ import {
 	SidebarGroupContent,
 	SidebarGroupLabel,
 	SidebarHeader,
+	SidebarInset,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
@@ -18,52 +18,16 @@ import Image from "next/image";
 import Link from "next/link";
 import Cookies from "js-cookie";
 
-// const data = {
-// 	navMain: [
-// 		{
-// 			title: "Kelola Menu",
-// 			url: "#",
-// 			items: [
-// 				{
-// 					title: "Dashboard",
-// 					url: "/dashboard/home",
-// 					icon: <MdOutlineSpaceDashboard />,
-// 				},
-// 				{ title: "Menu", url: "/dashboard/menu", icon: <BiFoodMenu /> },
-// 				{
-// 					title: "Kategori Menu",
-// 					url: "/dashboard/kategori-menu",
-// 					icon: <LuMenuSquare />,
-// 				},
-// 			],
-// 		},
-// 		{
-// 			title: "Kelola Pesanan",
-// 			url: "#",
-// 			items: [
-// 				{
-// 					title: "Pesanan",
-// 					url: "/dashboard/pesanan",
-// 					icon: <MdOutlineNoteAlt />,
-// 				},
-// 				{
-// 					title: "Reservasi",
-// 					url: "/dashboard/reservasi",
-// 					icon: <MdEventNote />,
-// 				},
-// 				{
-// 					title: "Feedback",
-// 					url: "/dashboard/feedback",
-// 					icon: <MdOutlineFeedback />,
-// 				},
-// 			],
-// 		},
-// 	],
-// };
+const SidebarDashboard = ({ children, data, header }) => {
+	const [user, setUser] = React.useState(null);
 
-const SidebarDashboard = ({ children, data }) => {
-	const tokenUser = Cookies.get("auth_session");
-	const user = tokenUser ? JSON.parse(atob(tokenUser.split(".")[1])) : null;
+	React.useEffect(() => {
+		const tokenUser = Cookies.get("auth_session");
+		if (tokenUser) {
+			const decodedToken = JSON.parse(atob(tokenUser.split(".")[1]));
+			setUser(decodedToken);
+		}
+	}, []);
 
 	const filteredNavMain = data.navMain.filter(
 		(item) => (user && user.role === "admin") || item.title !== "Kelola User"
@@ -110,7 +74,10 @@ const SidebarDashboard = ({ children, data }) => {
 				</SidebarContent>
 				<SidebarRail />
 			</Sidebar>
-			{children}
+			<SidebarInset>
+				{header}
+				{children}
+			</SidebarInset>
 		</>
 	);
 };

@@ -62,11 +62,13 @@ const HapusUser = ({ id, fetchDataUser }) => {
 						>
 							Hapus
 						</Button>
-						<div className="w-full" onClick={() => setOpenHapus(false)}>
-							<Button variant="outline" className="w-full">
-								Batal
-							</Button>
-						</div>
+						<Button
+							variant="outline"
+							className="w-full"
+							onClick={() => setOpenHapus(false)}
+						>
+							Batal
+						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>

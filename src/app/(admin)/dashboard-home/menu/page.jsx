@@ -5,6 +5,7 @@ import axios from "axios";
 import Image from "next/image";
 
 import { CaretSortIcon } from "@radix-ui/react-icons";
+
 import { Button } from "@/components/ui/button";
 
 import TambahMenu from "./components/TambahMenu";
@@ -44,6 +45,15 @@ const PageMenu = () => {
 				cell: ({ row }) => (
 					<div className="capitalize w-[200px] overflow-x-auto">
 						{row.getValue("nama_menu")}
+					</div>
+				),
+			},
+			{
+				accessorKey: "ispopuler",
+				header: "Populer Menu",
+				cell: ({ row }) => (
+					<div className="capitalize overflow-x-auto">
+						{row.getValue("ispopuler") === "populer" ? "Ya" : "Tidak"}
 					</div>
 				),
 			},

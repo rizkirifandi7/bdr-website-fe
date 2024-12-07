@@ -1,5 +1,5 @@
 import React from "react";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import SidebarDashboard from "@/components/SidebarDashboard";
 import DashboardHeaderOrder from "@/components/DashboardHeaderOrder";
 import { Toaster } from "sonner";
@@ -18,11 +18,8 @@ const LayoutAdmin = ({ children }) => {
 		<>
 			<Toaster position="top-center" />
 			<SidebarProvider>
-				<SidebarDashboard data={OrderNavData}>
-					<SidebarInset>
-						<DashboardHeaderOrder />
-						<div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
-					</SidebarInset>
+				<SidebarDashboard data={OrderNavData} header={<DashboardHeaderOrder />}>
+					<div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
 				</SidebarDashboard>
 			</SidebarProvider>
 		</>

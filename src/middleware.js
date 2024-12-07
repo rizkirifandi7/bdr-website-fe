@@ -7,9 +7,9 @@ export async function middleware(request) {
 
 	const { pathname } = request.nextUrl;
 
-	if (pathname.startsWith("/order/order-detail")) {
-		return NextResponse.next();
-	}
+	// if (pathname.startsWith("/order/order-detail")) {
+	// 	return NextResponse.next();
+	// }
 
 	if (!token && pathname.startsWith("/dashboard")) {
 		return NextResponse.rewrite(new URL("/auth/signin", request.url));

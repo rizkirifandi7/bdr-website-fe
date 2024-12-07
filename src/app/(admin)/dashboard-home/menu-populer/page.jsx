@@ -40,7 +40,19 @@ const PageMenuPopuler = () => {
 		() => [
 			{
 				accessorKey: "ispopuler",
-				header: "Populer Menu",
+				header: ({ column }) => {
+					return (
+						<Button
+							variant="ghost"
+							onClick={() =>
+								column.toggleSorting(column.getIsSorted() === "asc")
+							}
+						>
+							Menu Populer
+							<CaretSortIcon className="ml-2 h-4 w-4" />
+						</Button>
+					);
+				},
 				cell: ({ row }) => (
 					<div className="capitalize">{row.getValue("ispopuler")}</div>
 				),
@@ -117,6 +129,10 @@ const PageMenuPopuler = () => {
 		[fetchDataMenu]
 	);
 
+	const filterData = React.useMemo(() => {
+		return data.filter((item) => item.ispopuler === "populer");
+	}, [data]);
+
 	return (
 		<React.Fragment>
 			{loading && <div>Loading...</div>}
@@ -124,7 +140,7 @@ const PageMenuPopuler = () => {
 			{!loading && !error && (
 				<TableView
 					columns={columns}
-					data={data}
+					data={filterData}
 					TambahComponent={() => <TambahMenu fetchDataMenu={fetchDataMenu} />}
 					title="Dashboard Menu Populer"
 					search="nama_menu"
