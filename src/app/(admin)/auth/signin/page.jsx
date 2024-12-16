@@ -145,9 +145,8 @@ const PageLogin = () => {
 								/>
 								<button
 									type="submit"
-									className={`w-full p-3 rounded-lg flex items-center justify-center bg-black text-white hover:bg-slate-800 ${
-										isLoading ? "cursor-not-allowed" : ""
-									}`}
+									className={`w-full p-3 rounded-lg flex items-center justify-center bg-black text-white hover:bg-slate-800 ${isLoading ? "cursor-not-allowed" : ""
+										}`}
 									disabled={isLoading}
 								>
 									{isLoading ? (

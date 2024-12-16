@@ -7,15 +7,11 @@ export async function middleware(request) {
 
 	const { pathname } = request.nextUrl;
 
-	// if (pathname.startsWith("/order/order-detail")) {
-	// 	return NextResponse.next();
-	// }
-
-	if (!token && pathname.startsWith("/dashboard")) {
-		return NextResponse.rewrite(new URL("/auth/signin", request.url));
-	}
-
-	if (!token && pathname.startsWith("/dashboard-home")) {
+	if (
+		!token &&
+		(pathname.startsWith("/dashboard") ||
+			pathname.startsWith("/dashboard-home"))
+	) {
 		return NextResponse.rewrite(new URL("/auth/signin", request.url));
 	}
 

@@ -19,6 +19,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const SidebarDashboardHeader = () => {
 	const router = useRouter();
@@ -28,7 +29,6 @@ const SidebarDashboardHeader = () => {
 		try {
 			const response = await Logout();
 			if (response.status === true) {
-				router.push("/auth/signin");
 				removeCookie("auth_session");
 				toast.success("Logout berhasil.");
 			}
@@ -62,11 +62,12 @@ const SidebarDashboardHeader = () => {
 					<DropdownMenuContent className="w-auto me-5">
 						<DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
 						<DropdownMenuSeparator />
-						<Button variant="outline" onClick={handleLogout}>
-							<DropdownMenuItem>
-								<LogOut />
-								<span>Keluar</span>
-							</DropdownMenuItem>
+						<Button variant="outline" onClick={handleLogout} asChild>
+							<a href="/auth/signin">
+								<DropdownMenuItem>
+									<LogOut /> Keluar
+								</DropdownMenuItem>
+							</a>
 						</Button>
 					</DropdownMenuContent>
 				</DropdownMenu>

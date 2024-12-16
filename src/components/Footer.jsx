@@ -1,7 +1,6 @@
 import Image from "next/image";
 import React from "react";
 import Logo from "../assets/logobdr.png";
-import { Facebook } from "lucide-react";
 import { CiFacebook, CiInstagram } from "react-icons/ci";
 import Link from "next/link";
 
