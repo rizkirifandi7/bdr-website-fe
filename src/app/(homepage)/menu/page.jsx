@@ -37,12 +37,12 @@ const MenuPage = () => {
 
 	return (
 		<div className="">
-			<div className="h-full max-w-screen-xl mx-auto">
+			<div className="h-full max-w-screen-xl mx-auto px-6">
 				<div className="flex justify-center items-center hero-header h-[300px] rounded-b-md">
-					<h1 className="text-5xl font-bold text-white pt-14">DAFTAR MENU</h1>
+					<h1 className="text-3xl md:text-5xl font-bold text-white pt-14">DAFTAR MENU</h1>
 				</div>
 				<div className="h-full my-10">
-					<div className="grid grid-cols-5 gap-4 mt-4">
+					<div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
 						{dataFilterMenu.map((data) => (
 							<FilterMenu
 								key={data.id}
@@ -61,7 +61,7 @@ const MenuPage = () => {
 							<hr className="w-full" />
 						</div>
 						{filteredMenus.length > 0 ? (
-							<div className="grid grid-cols-4 gap-6 mt-4">
+							<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
 								{filteredMenus.map((data) => (
 									<Card key={data.id} className="flex-col rounded-md p-3">
 										<div className="bg-slate-100 rounded-lg">

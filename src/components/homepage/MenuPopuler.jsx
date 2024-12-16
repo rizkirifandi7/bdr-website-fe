@@ -43,18 +43,18 @@ const MenuPopuler = () => {
 				</div>
 				{filterMenuPopuler.length > 0 ? (
 					<Carousel
-						className="w-full mt-10"
+						className="w-full mt-10 px-8"
 						plugins={[
 							Autoplay({
 								delay: 2000,
 							}),
 						]}
 					>
-						<CarouselContent className="-ml-1">
+						<CarouselContent>
 							{filterMenuPopuler.map((item) => (
 								<CarouselItem
 									key={item.id}
-									className="md:basis-1/2 lg:basis-1/3"
+									className="basis-[380px] md:basis-1/2 lg:basis-1/3"
 								>
 									<div className="p-2">
 										<Card className="rounded-md ">
@@ -85,8 +85,6 @@ const MenuPopuler = () => {
 								</CarouselItem>
 							))}
 						</CarouselContent>
-						<CarouselPrevious />
-						<CarouselNext />
 					</Carousel>
 				) : (
 					<div className="flex flex-col h-[300px] justify-center items-center">
