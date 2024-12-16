@@ -27,7 +27,7 @@ const MenuOrder = ({ data, addToCart, removeFromCart, cart }) => {
 					className="flex flex-col justify-center items-center p-3 sm:p-4"
 				>
 					<Image
-						src={`${process.env.NEXT_PUBLIC_API_URL}/menu/view/${data.gambar}`}
+						src={data.gambar}
 						alt={data.nama_menu}
 						width={197}
 						height={170}

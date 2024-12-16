@@ -113,7 +113,7 @@ const PageOrderDetail = () => {
 								>
 									<div className="flex items-center gap-3 w-[300px] h-[120px]">
 										<Image
-											src={`${process.env.NEXT_PUBLIC_API_URL}/menu/view/${item.menu.gambar}`}
+											src={item.menu.gambar}
 											width={80}
 											height={80}
 											alt="menu"

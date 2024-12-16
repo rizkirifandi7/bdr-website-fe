@@ -44,6 +44,7 @@ const FormSchema = z.object({
 const TambahMenu = ({ fetchDataMenu }) => {
 	const [openTambah, setOpenTambah] = useState(false);
 	const [dataKategori, setDataKategori] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const fetchDataKategori = useCallback(async () => {
 		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/kategori`);
@@ -68,6 +69,7 @@ const TambahMenu = ({ fetchDataMenu }) => {
 	});
 
 	const handleTambah = async (data) => {
+		setIsLoading(true);
 		try {
 			const formData = new FormData();
 			formData.append("nama_menu", data.nama_menu);
@@ -91,6 +93,8 @@ const TambahMenu = ({ fetchDataMenu }) => {
 		} catch (error) {
 			console.error("Error adding menu:", error);
 			toast.error("Gagal menambahkan menu");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -238,8 +242,8 @@ const TambahMenu = ({ fetchDataMenu }) => {
 							/>
 						</div>
 						<DialogFooter>
-							<Button type="submit" className="w-full mt-2">
-								Submit
+							<Button type="submit" className="w-full mt-2" disabled={isLoading}>
+								{isLoading ? "Loading..." : "Submit"}
 							</Button>
 						</DialogFooter>
 					</form>

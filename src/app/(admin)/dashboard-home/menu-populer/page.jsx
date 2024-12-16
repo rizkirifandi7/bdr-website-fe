@@ -72,9 +72,9 @@ const PageMenuPopuler = () => {
 				cell: ({ row }) => (
 					<div className="capitalize rounded-md">
 						<Image
-							src={`${process.env.NEXT_PUBLIC_API_URL}/menu/view/${row.getValue(
+							src={row.getValue(
 								"gambar"
-							)}`}
+							)}
 							alt={row.getValue("gambar")}
 							width={80}
 							height={80}

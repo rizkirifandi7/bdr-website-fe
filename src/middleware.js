@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { getCookie } from "./actions/cookies";
 
 export async function middleware(request) {
-	const token = await getCookie("auth_session");
-	const typeOrder = await getCookie("typeOrder");
+	const token = request.cookies.get("auth_session").value;
+	const typeOrder = request.cookies.get("typeOrder").value
 
 	const { pathname } = request.nextUrl;
 

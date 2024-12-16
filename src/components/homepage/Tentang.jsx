@@ -71,9 +71,6 @@ const Tentang = () => {
 								</div>
 							</div>
 						</div>
-						<Button className="w-fit py-6 px-10 rounded-md bg-headingText hover:bg-orange-300 uppercase mt-10">
-							<Link href="/tentang">Selengkapnya</Link>
-						</Button>
 					</div>
 				</div>
 			</div>

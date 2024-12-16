@@ -51,11 +51,11 @@ const Navbar = () => {
 	const [activeLink, setActiveLink] = useState("Beranda");
 
 	return (
-		<nav className="fixed w-full bg-[#0F172B] z-50">
-			<div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+		<nav className="fixed w-full bg-[#0F172B] z-50 p-4">
+			<div className="max-w-screen-xl flex items-center justify-between mx-auto ">
 				<Link
 					href="/beranda"
-					className="flex items-center space-x-2 rtl:space-x-reverse"
+					className="flex items-center space-x-2"
 				>
 					<Image
 						src="/logobdr.png"
@@ -68,9 +68,9 @@ const Navbar = () => {
 					</p>
 				</Link>
 
-				<DropdownMenu className="w-full">
+				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button size="icon" className="md:hidden inline-flex items-center p-2 w-10 h-10 justify-center bg-[#0F172B] text-white border">
+						<Button size="icon" className="md:hidden flex items-center justify-center bg-[#0F172B] text-white border">
 							<Menu />
 						</Button>
 					</DropdownMenuTrigger>

@@ -55,7 +55,7 @@ const PageDetailMenu = () => {
 
 				<div className="w-full px-4 ">
 					<Image
-						src={`${process.env.NEXT_PUBLIC_API_URL}/menu/view/${menu.gambar}`}
+						src={menu.gambar}
 						width={300}
 						height={200}
 						alt="details menu"

@@ -66,7 +66,7 @@ const MenuPage = () => {
 									<Card key={data.id} className="flex-col rounded-md p-3">
 										<div className="bg-slate-100 rounded-lg">
 											<Image
-												src={`${process.env.NEXT_PUBLIC_API_URL}/menu/view/${data.gambar}`}
+												src={data.gambar}
 												alt={data.nama_menu}
 												width={300}
 												height={300}
